@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+dist/
+build/
+*.egg-info/
+
+# .NET
+**/bin/
+**/obj/
+*.user
+*.suo
+
+# Generated coverage / TC1 artifacts
+# Keep run output under this root; coverage fixtures elsewhere must remain trackable.
+/artifacts/
+
+# IDE / OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Local env
+.env
+.env.*
+!.env.example
