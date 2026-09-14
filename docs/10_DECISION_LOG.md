@@ -73,13 +73,40 @@ The [architecture output policy](03_ARCHITECTURE.md#generated-output-policy) def
 the subdirectories. Ignore the artifact root rather than coverage filenames throughout
 the repository so coverage fixtures remain trackable.
 
+## D012 — Local sample SDK and test framework
+**Accepted**
+
+WP0 confirmed SDK 10.0.401 can build the `net10.0` sample and run 7 passing tests.
+The sample pins SDK 10.0.401 with `latestPatch` roll-forward in its own `global.json`.
+Run the SDK from inside `sample-dotnet/` to apply that selection.
+
+The initial machine had Git 2.55.0 and Python 3.14.6, but no .NET SDK.
+Use an optional repository-local SDK under `artifacts/tools/dotnet/`, with CLI state
+and NuGet packages under `artifacts/tools/`; no global PATH or Git configuration was changed.
+A fresh checkout needs an SDK and initial package restore.
+Instructions are in [the sample README](../sample-dotnet/README.md).
+
+The new sample uses xUnit 2.9.3, xunit.runner.visualstudio 3.1.4, and
+Microsoft.NET.Test.Sdk 17.14.1, as provided by the installed SDK's xUnit template.
+Coverage setup remains WP1; the template's collector reference was removed for WP0.
+
+## D013 — Controlled discount policy with an intentional test gap
+**Accepted**
+
+Use one `DiscountService` with negative-input rejection, no discount below 100,
+10% discount from 100 to below 1000, and 20% discount from 1000 upward.
+Use decimal arithmetic without rounding. These are synthetic sample rules.
+
+Seven deterministic test cases check rejection, zero, thresholds, and fixed totals.
+The 20% return path is deliberately untested. WP1 must verify coverage evidence;
+WP0 makes no measured line/branch coverage claim. No semantic branch identity is inferred.
+The Python folders contain placeholders only until WP2.
+
 ## Pending decisions
 
 Fill during implementation:
 
 ```text
-Local sample target framework:
-Local sample test framework:
 Coverlet setup:
 ReportGenerator setup:
 Final CLI shape:

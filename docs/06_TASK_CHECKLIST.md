@@ -1,13 +1,13 @@
 # Task Checklist
 
 ## WP0
-- [ ] Verify Git
-- [ ] Verify Python
-- [ ] Verify .NET
-- [ ] Create repo layout
-- [ ] Create local C# sample
-- [ ] Add sample tests
-- [ ] Run `dotnet test`
+- [x] Verify Git
+- [x] Verify Python
+- [x] Verify .NET
+- [x] Create repo layout
+- [x] Create local C# sample
+- [x] Add sample tests
+- [x] Run `dotnet test`
 
 ## WP1
 - [ ] Configure coverage

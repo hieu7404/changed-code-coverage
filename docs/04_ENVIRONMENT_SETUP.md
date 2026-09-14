@@ -124,3 +124,12 @@ Do not store absolute machine-specific paths in:
 - config committed to Git.
 
 Use repository-relative paths and CLI arguments.
+
+## WP0 validated sample
+
+WP0 provides a working net10.0 sample with 7 passing xUnit test cases.
+Its SDK selection and exact restore/build/test commands are documented in
+[sample-dotnet/README.md](../sample-dotnet/README.md), including optional
+repository-local SDK installation when the machine has only a runtime.
+Run from the sample directory to honor its global.json.
+Python package creation and pytest setup remain WP2.
