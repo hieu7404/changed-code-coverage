@@ -1,6 +1,6 @@
 # Local C# Pilot
 
-WP0 is complete: the solution builds and all 7 xUnit test cases pass.
+WP0 and WP1 are complete: all 7 tests pass and the coverage baseline is validated.
 
 ## Contents
 
@@ -25,8 +25,8 @@ This is a synthetic policy, not a production business rule. No rounding is appli
 | 1000 and above | 20% discount | Intentionally not tested |
 
 The last path is deliberately omitted to provide a known test gap for WP1.
-These are test-design expectations, not measured coverage facts.
-WP1 must verify the exported line hits and available branch evidence.
+WP1 has verified this test gap against real Cobertura and ReportGenerator output.
+See the coverage baseline link below for measured line hits and branch aggregates.
 
 ## Run with an installed SDK
 
@@ -85,16 +85,30 @@ Pop-Location
 Stop and resolve any failed command before continuing. Commands assume the repository
 root is the starting directory and use no machine-specific paths.
 
-## WP0 validation and next step
+## Validated results and next step
 
-- Restore succeeded from nuget.org.
 - Debug build: 0 warnings, 0 errors.
 - Tests: 7 passed, 0 failed, 0 skipped.
-- Test evidence: `artifacts/test-results/wp0/sample-tests.trx`.
-- `src/tc1/` and root `tests/` contain placeholders only; Python bootstrap is WP2.
+- WP0 evidence: artifacts/test-results/wp0/sample-tests.trx.
+- WP1 baseline: 10/12 instrumented lines and 5/6 branch outcomes covered (83.33% each).
+- The 20% return at L16 has zero hits; L13 has positive hits but branch coverage is 1/2.
+- Python bootstrap remains WP2.
 
-WP1: select/configure a compatible coverage collector for this existing xUnit/VSTest
-project, write raw results under `artifacts/test-results/`, normalize the selected
-export to `artifacts/tc1/coverage.cobertura.xml`, and generate ReportGenerator HTML
-under `artifacts/tc1/coverage/`. Manually verify the discount paths against the export.
-No collector, measured coverage, or TC1 mapper is included in WP0.
+## Collect coverage
+
+From the repository root using the local SDK:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File sample-dotnet/Collect-Coverage.ps1 -Dotnet ./artifacts/tools/dotnet/dotnet.exe
+```
+
+The script restores pinned Coverlet 6.0.4 and ReportGenerator 5.5.11, builds, tests,
+selects the current TRX coverage attachment, and generates the baseline bundle.
+
+Open artifacts/tc1/coverage/index.html.
+Cobertura is at artifacts/tc1/coverage.cobertura.xml; raw run evidence and logs are under
+artifacts/test-results/wp1-<uuid>/. All generated output is ignored by Git.
+
+See [the WP1 runbook](../docs/13_COVERAGE_BASELINE.md) for exact evidence,
+denominators, reproducibility, branch limitations and the resolved local policy blocker.
+These are whole-sample metrics; changed-code mapping is not implemented yet.

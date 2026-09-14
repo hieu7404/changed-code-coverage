@@ -10,10 +10,14 @@
 - [x] Run `dotnet test`
 
 ## WP1
-- [ ] Configure coverage
-- [ ] Produce Cobertura XML
-- [ ] Run ReportGenerator
-- [ ] Manually verify known lines/branches
+
+Validated: 7 tests pass; Cobertura and HTML checked against the sample.
+See [coverage baseline evidence](13_COVERAGE_BASELINE.md).
+
+- [x] Configure coverage
+- [x] Produce Cobertura XML
+- [x] Run ReportGenerator
+- [x] Manually verify known lines/branches
 
 ## WP2
 - [ ] Create Python package

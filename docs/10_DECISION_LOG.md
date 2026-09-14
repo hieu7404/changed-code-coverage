@@ -102,13 +102,30 @@ The 20% return path is deliberately untested. WP1 must verify coverage evidence;
 WP0 makes no measured line/branch coverage claim. No semantic branch identity is inferred.
 The Python folders contain placeholders only until WP2.
 
+## D014 — Validated sample coverage collector and visualization
+**Accepted**
+
+WP1 validates Coverlet collector 6.0.4 with the existing xUnit/VSTest runner on
+net10.0 / SDK 10.0.401, plus local ReportGenerator 5.5.11.
+The sample runsettings include only Tc1.Sample and explicitly exclude test assemblies.
+Keep Cobertura evidence unchanged; generate coverage HTML and text summary, with
+risk-hotspot selection disabled. All tool caches and generated evidence stay under artifacts.
+
+Select the Coverlet attachment declared by the current successful run's TRX deployment
+metadata. VSTest creates duplicate physical exports; recursive file counting is not a
+reliable way to determine how many collector attachments exist. Reject missing or
+ambiguous attachments instead of choosing the first file.
+
+The validated run passes all 7 tests, reports 10/12 instrumented lines and 5/6 branch
+outcomes covered, and preserves raw/bundled XML hashes. Branch evidence is aggregate;
+positive hits at a partially covered condition still mean the line is covered.
+See [WP1 baseline evidence and limitations](13_COVERAGE_BASELINE.md).
+
 ## Pending decisions
 
 Fill during implementation:
 
 ```text
-Coverlet setup:
-ReportGenerator setup:
 Final CLI shape:
 HTML renderer choice:
 Real pilot repository when available:
