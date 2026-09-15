@@ -49,11 +49,11 @@ artifacts/tc1/coverage/
 
 ### 5. Run TC1
 
-WP3 resolves base/head and reads changed head-line candidates. If Git succeeds,
-`analyze` currently exits 1 with an explicit message that coverage analysis and
-reports remain unimplemented; it writes no reports. The end-to-end demo becomes
-available after WP4-WP9. See [Python installation](14_PYTHON_BOOTSTRAP.md) and
-[the current Git/CLI contract](15_GIT_DIFF_PARSER.md).
+WP4 resolves base/head, reads changed head-line candidates and parses Cobertura.
+When both inputs succeed, `analyze` exits 1 with an explicit message that mapping
+and reports remain unimplemented; it writes no reports. The end-to-end demo becomes
+available after WP5-WP9. See [Python installation](14_PYTHON_BOOTSTRAP.md) and
+[the current coverage/CLI contract](16_COBERTURA_PARSER.md).
 
 Target analysis invocation:
 

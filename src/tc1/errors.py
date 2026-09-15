@@ -23,3 +23,7 @@ class GitDiffError(InputError):
 
 class DiffParseError(InputError):
     """Malformed or unsupported Git diff evidence."""
+
+
+class CoberturaError(InputError):
+    """Unreadable, malformed or unsupported Cobertura input."""

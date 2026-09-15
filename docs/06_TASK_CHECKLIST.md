@@ -43,10 +43,15 @@ See [Git diff evidence and limitations](15_GIT_DIFF_PARSER.md).
 - [x] Add fixtures
 
 ## WP4
-- [ ] Parse Cobertura lines
-- [ ] Parse hit counts
-- [ ] Preserve branch metadata
-- [ ] Handle malformed input
+
+Validated: 166 total Python tests pass; five reviewed XML fixtures and the WP1
+export confirm hit counts, class/method separation and branch metadata.
+See [Cobertura evidence and limitations](16_COBERTURA_PARSER.md).
+
+- [x] Parse Cobertura lines
+- [x] Parse hit counts
+- [x] Preserve branch metadata
+- [x] Handle malformed input
 
 ## WP5
 - [ ] Normalize Windows paths

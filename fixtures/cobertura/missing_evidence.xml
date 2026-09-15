@@ -1,0 +1,15 @@
+<coverage line-rate="1">
+  <sources><source /><source>  ./source root/  </source></sources>
+  <packages><package><classes>
+    <class filename="MethodOnly.cs"><methods>
+      <method name="M"><lines><line number="1" hits="9" /></lines></method>
+    </methods></class>
+    <class filename="Empty.cs"><lines /></class>
+    <class filename="Gaps.cs"><lines>
+      <line number="3" hits="0" />
+      <line number="7" hits="2" branch="maybe" condition-coverage="not measured">
+        <conditions><condition /><condition number="opaque" type="switch" coverage="partial" /></conditions>
+      </line>
+    </lines></class>
+  </classes></package></packages>
+</coverage>

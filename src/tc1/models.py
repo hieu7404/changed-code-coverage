@@ -55,6 +55,7 @@ class ConditionEvidence:
     number: str | None = None
     type: str | None = None
     coverage: str | None = None
+    attributes: tuple[tuple[str, str], ...] = ()
 
 
 @dataclass(frozen=True)
@@ -65,6 +66,8 @@ class LineCoverage:
     hits: int
     condition_coverage: str | None = None
     conditions: tuple[ConditionEvidence, ...] = ()
+    branch: str | None = None
+    attributes: tuple[tuple[str, str], ...] = ()
 
     def __post_init__(self) -> None:
         _count("hits", self.hits)
@@ -185,3 +188,52 @@ class GitDiffResult:
     head_commit: str
     merge_base: str
     files: tuple[FileChange, ...] = ()
+
+
+@dataclass(frozen=True)
+class CoverageMethod:
+    """Supporting method evidence; never added to the class-level line inventory."""
+
+    name: str | None = None
+    signature: str | None = None
+    lines: tuple[LineCoverage, ...] = ()
+    lines_present: bool = False
+    attributes: tuple[tuple[str, str], ...] = ()
+
+
+@dataclass(frozen=True)
+class CoverageClass:
+    filename: str
+    name: str | None = None
+    lines: tuple[LineCoverage, ...] = ()
+    methods: tuple[CoverageMethod, ...] = ()
+    lines_present: bool = False
+    attributes: tuple[tuple[str, str], ...] = ()
+
+
+@dataclass(frozen=True)
+class CoveragePackage:
+    name: str | None = None
+    classes: tuple[CoverageClass, ...] = ()
+    attributes: tuple[tuple[str, str], ...] = ()
+
+
+@dataclass(frozen=True)
+class CoverageReport:
+    """Raw export inventory, not classified coverage or a report summary.
+
+    Document order and duplicate records are retained. Neither convenience property
+    merges or deduplicates evidence; future mapping must resolve ambiguity explicitly.
+    """
+
+    sources: tuple[str, ...] = ()
+    packages: tuple[CoveragePackage, ...] = ()
+    attributes: tuple[tuple[str, str], ...] = ()
+
+    @property
+    def classes(self) -> tuple[CoverageClass, ...]:
+        return tuple(item for package in self.packages for item in package.classes)
+
+    @property
+    def line_entries(self) -> tuple[LineCoverage, ...]:
+        return tuple(line for item in self.classes for line in item.lines)

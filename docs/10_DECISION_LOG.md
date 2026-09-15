@@ -157,6 +157,27 @@ Coverage classification and denominator logic remain in later work packages.
 The CLI now reads Git changes then exits explicitly before the unavailable WP4-WP9 stages.
 See [WP3 validation and limitations](15_GIT_DIFF_PARSER.md).
 
+## D017 — Preserve Cobertura records before mapping
+**Accepted**
+
+WP4 uses standard-library XML parsing for the validated Coverlet/Cobertura profile.
+Require explicit filename, positive line number and nonnegative integer hits.
+Missing line entries remain missing; malformed explicit records fail without defaulting
+hits to zero. Preserve source strings, repeated records and raw branch metadata.
+
+Class-level lines form the primary inventory; method-level lines are retained separately
+without fallback or double counting. Duplicates are not merged or overwritten; the mapper
+must establish reliability before classifying them. Root summary rates do not create
+coverage evidence. Branch interpretation remains WP7.
+
+Accept namespace-free and consistently namespaced XML. Reject unsupported structure
+and DOCTYPE declarations explicitly; the validated Coverlet export has no DTD.
+The CLI resolves Git inputs, reads the coverage path relative to the caller's working
+directory, and then stops before WP5-WP9. Input bytes and report destinations are preserved.
+
+Validated with 166 passing Python tests and the actual WP1 export.
+See [WP4 evidence contract and limitations](16_COBERTURA_PARSER.md).
+
 ## Pending decisions
 
 Fill during implementation:

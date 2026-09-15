@@ -1,0 +1,15 @@
+<coverage>
+  <sources><source>./first/</source><source>../second/</source></sources>
+  <packages>
+    <package name="one"><classes>
+      <class name="A" filename="Shared.cs"><lines>
+        <line number="7" hits="0" />
+        <line number="7" hits="3" branch="True" condition-coverage="50% (1/2)" />
+      </lines></class>
+      <class name="Other" filename="Other.cs"><lines><line number="1" hits="2" /></lines></class>
+    </classes></package>
+    <package name="two"><classes>
+      <class name="B" filename="Shared.cs"><lines><line number="7" hits="5" /></lines></class>
+    </classes></package>
+  </packages>
+</coverage>

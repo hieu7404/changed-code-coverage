@@ -2,7 +2,7 @@
 
 Small deterministic fixtures used by TC1 tests.
 
-Current diff fixtures and future coverage fixture layout:
+Current fixture layout:
 
 ```text
 fixtures/
@@ -24,6 +24,12 @@ Each patch is parsed with its own raw-inventory path in production. Tests of
 multiple files, revisions and literal filenames use isolated Git repositories
 under `artifacts/test-results/pytest-tmp/`. Patch fixtures are kept at LF by
 `.gitattributes` to match Git's patch output on all hosts.
+
+WP4 adds five XML fixtures under `cobertura/` and reviewed sample expectations in
+`expected/cobertura.json`. `coverlet_sample.xml` retains the WP1 line/branch records
+with portable paths and a fixed timestamp. Other fixtures exercise multiple packages,
+duplicate records, missing/empty evidence, namespaces and opaque metadata.
+See [WP4 validation](../docs/16_COBERTURA_PARSER.md).
 
 All generated run output goes under the repository-root `artifacts/`, regardless of size.
 Only small inputs and expected results deliberately reviewed as deterministic fixtures

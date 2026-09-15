@@ -81,19 +81,22 @@ def test_unimplemented_analysis_preserves_existing_output(tmp_path, git_repo):
     output = tmp_path / "output" / "report.json"
     output.parent.mkdir()
     output.write_text("existing evidence", encoding="utf-8")
+    (output.parent / "coverage.xml").write_text("<coverage><packages/></coverage>", encoding="utf-8")
+    git_repo.write("coverage.xml", "<wrong-root/>")
     result = subprocess.run(
         [sys.executable, "-m", "tc1", "analyze", "--repo", str(git_repo.path), "--base", "HEAD",
-         "--coverage", "missing.xml", "--json", str(output),
+         "--coverage", "coverage.xml", "--json", str(output),
          "--markdown", "report.md", "--html", "index.html"],
         cwd=output.parent, capture_output=True, text=True, check=False,
     )
     assert result.returncode == 1
     assert result.stdout == ""
-    assert "coverage analysis and reports are not implemented yet" in result.stderr
+    assert "mapping and reports are not implemented yet" in result.stderr
+    assert "Cobertura parsed 0 class-level line entries" in result.stderr
     assert "Git diff resolved 0 changed files" in result.stderr
     assert "Traceback" not in result.stderr
     assert output.read_text(encoding="utf-8") == "existing evidence"
-    assert sorted(path.name for path in output.parent.iterdir()) == ["report.json"]
+    assert sorted(path.name for path in output.parent.iterdir()) == ["coverage.xml", "report.json"]
 
 
 @pytest.mark.parametrize("error", [InputError, ModelValidationError])
@@ -124,3 +127,41 @@ def test_analyze_reports_git_input_errors(git_repo, capsys):
     assert "Git rev-parse failed" in error
     assert "not implemented" not in error
     assert "Traceback" not in error
+
+
+
+@pytest.mark.parametrize("data", [
+    None, "<broken", "<wrong-root/>",
+    '<coverage><packages><package><classes><class filename="F.cs"><lines>'
+    '<line number="1"/></lines></class></classes></package></packages></coverage>',
+])
+def test_analyze_reports_cobertura_errors_without_touching_outputs(git_repo, tmp_path, capsys, data):
+    git_repo.commit()
+    coverage = tmp_path / "coverage.xml"
+    if data is not None:
+        coverage.write_text(data, encoding="utf-8")
+    output = tmp_path / "report.json"
+    output.write_text("existing", encoding="utf-8")
+    assert cli.main([
+        "analyze", "--repo", str(git_repo.path), "--base", "HEAD",
+        "--coverage", str(coverage), "--json", str(output),
+    ]) == 1
+    error = capsys.readouterr().err
+    assert "Cobertura" in error
+    assert "coverage.xml" in error
+    assert "not implemented" not in error
+    assert "Traceback" not in error
+    assert output.read_text(encoding="utf-8") == "existing"
+
+
+def test_analyze_reads_canonical_cobertura_entries_before_stopping(git_repo, capsys):
+    git_repo.commit()
+    coverage = Path(__file__).resolve().parents[1] / "fixtures/cobertura/coverlet_sample.xml"
+    assert cli.main([
+        "analyze", "--repo", str(git_repo.path), "--base", "HEAD",
+        "--coverage", str(coverage),
+    ]) == 1
+    error = capsys.readouterr().err
+    assert "Git diff resolved 0 changed files" in error
+    assert "Cobertura parsed 12 class-level line entries" in error
+    assert "WP5-WP9" in error

@@ -96,6 +96,10 @@ Parse:
 
 Do not infer absent data.
 
+Exit (validated): exact class-level line/hit records; method evidence kept separately;
+source/branch metadata preserved; malformed inputs rejected; controlled fixtures and
+the actual WP1 export checked. See [WP4 implementation](16_COBERTURA_PARSER.md).
+
 ## WP5 — Path normalization
 
 Normalize:

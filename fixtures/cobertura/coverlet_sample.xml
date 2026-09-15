@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Reviewed WP1 sample evidence with portable paths and fixed timestamp. -->
+<coverage line-rate="0.8332999999999999" branch-rate="0.8332999999999999"
+          version="1.9" timestamp="0" lines-covered="10" lines-valid="12"
+          branches-covered="5" branches-valid="6">
+  <sources><source>.</source></sources>
+  <packages>
+    <package name="Tc1.Sample" complexity="6">
+      <classes>
+        <class name="Tc1.Sample.DiscountService"
+               filename="sample-dotnet/Tc1.Sample/DiscountService.cs" complexity="6">
+          <methods>
+            <method name="CalculateTotal" signature="(System.Decimal)">
+              <lines>
+                <line number="7" hits="7" branch="False" />
+                <line number="8" hits="7" branch="True" condition-coverage="100% (2/2)">
+                  <conditions><condition number="14" type="jump" coverage="100%" /></conditions>
+                </line>
+                <line number="9" hits="2" branch="False" />
+                <line number="10" hits="2" branch="False" />
+                <line number="13" hits="5" branch="True" condition-coverage="50% (1/2)">
+                  <conditions><condition number="46" type="jump" coverage="50%" /></conditions>
+                </line>
+                <line number="14" hits="0" branch="False" />
+                <line number="16" hits="0" branch="False" />
+                <line number="19" hits="5" branch="True" condition-coverage="100% (2/2)">
+                  <conditions><condition number="84" type="jump" coverage="100%" /></conditions>
+                </line>
+                <line number="20" hits="3" branch="False" />
+                <line number="21" hits="3" branch="False" />
+                <line number="24" hits="2" branch="False" />
+                <line number="25" hits="5" branch="False" />
+              </lines>
+            </method>
+          </methods>
+          <lines>
+            <line number="7" hits="7" branch="False" />
+            <line number="8" hits="7" branch="True" condition-coverage="100% (2/2)">
+              <conditions><condition number="14" type="jump" coverage="100%" /></conditions>
+            </line>
+            <line number="9" hits="2" branch="False" />
+            <line number="10" hits="2" branch="False" />
+            <line number="13" hits="5" branch="True" condition-coverage="50% (1/2)">
+              <conditions><condition number="46" type="jump" coverage="50%" /></conditions>
+            </line>
+            <line number="14" hits="0" branch="False" />
+            <line number="16" hits="0" branch="False" />
+            <line number="19" hits="5" branch="True" condition-coverage="100% (2/2)">
+              <conditions><condition number="84" type="jump" coverage="100%" /></conditions>
+            </line>
+            <line number="20" hits="3" branch="False" />
+            <line number="21" hits="3" branch="False" />
+            <line number="24" hits="2" branch="False" />
+            <line number="25" hits="5" branch="False" />
+          </lines>
+        </class>
+      </classes>
+    </package>
+  </packages>
+</coverage>

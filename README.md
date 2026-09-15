@@ -92,11 +92,12 @@ Branches
 
 ## Current implementation
 
-WP0-WP3 are complete: the C# sample has a validated coverage baseline, the Python
-package is installed, and Git diff acquisition identifies changed head-line candidates.
-Coverage parsing, mapping, metrics and reports remain WP4-WP9.
-See [Python setup](docs/14_PYTHON_BOOTSTRAP.md) and
-[Git diff and current CLI behavior](docs/15_GIT_DIFF_PARSER.md).
+WP0-WP4 are complete: the C# sample has a validated coverage baseline, and the Python
+tool reads Git changes and Cobertura evidence. Path normalization, mapping, metrics
+and reports remain WP5-WP9.
+See [Python setup](docs/14_PYTHON_BOOTSTRAP.md),
+[Git diff](docs/15_GIT_DIFF_PARSER.md), and
+[Cobertura and current CLI behavior](docs/16_COBERTURA_PARSER.md).
 
 ## Important scope rule
 

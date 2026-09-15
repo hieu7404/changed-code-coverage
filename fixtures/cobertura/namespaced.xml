@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<coverage xmlns="urn:tc1:fixture:cobertura" version="fixture">
+  <sources><source>src\folder</source></sources>
+  <packages><package name="N"><classes>
+    <class filename="Đơn hàng &amp; phí.cs"><lines>
+      <line number="0002" hits="000" branch="true" custom="kept">
+        <conditions><condition number="x" type="jump" coverage="0%" collector-id="kept" /></conditions>
+      </line>
+    </lines></class>
+  </classes></package></packages>
+</coverage>
