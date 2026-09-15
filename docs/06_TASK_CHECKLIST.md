@@ -31,11 +31,16 @@ See [Python bootstrap evidence and limitations](14_PYTHON_BOOTSTRAP.md).
 - [x] Add error types
 
 ## WP3
-- [ ] Resolve base/head
-- [ ] Parse changed files
-- [ ] Parse changed lines
-- [ ] Handle multiple hunks
-- [ ] Add fixtures
+
+Validated: 104 total Python tests pass; eight reviewed patch fixtures and isolated
+Git integration cases cover the comparison contract. Actual WP2 commit checked.
+See [Git diff evidence and limitations](15_GIT_DIFF_PARSER.md).
+
+- [x] Resolve base/head
+- [x] Parse changed files
+- [x] Parse changed lines
+- [x] Handle multiple hunks
+- [x] Add fixtures
 
 ## WP4
 - [ ] Parse Cobertura lines

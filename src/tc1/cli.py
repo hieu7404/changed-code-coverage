@@ -1,4 +1,4 @@
-"""WP2 CLI contract; analysis is implemented in later work packages."""
+"""CLI with WP3 Git change acquisition; coverage analysis follows in WP4-WP9."""
 
 import argparse
 import sys
@@ -8,20 +8,21 @@ from pathlib import Path
 from tc1 import __version__
 from tc1.errors import AnalysisNotImplementedError, TC1Error
 from tc1.models import AnalysisRequest
+from tc1.git_diff import read_git_diff
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="tc1",
-        description="Changed-Code Coverage Analyzer (WP2 bootstrap).",
+        description="Changed-Code Coverage Analyzer (WP3 Git diff).",
         allow_abbrev=False,
     )
     parser.add_argument("--version", action="version", version=f"tc1 {__version__}")
     commands = parser.add_subparsers(dest="command", required=True)
     analyze = commands.add_parser(
         "analyze",
-        help="accept analysis arguments (pipeline not implemented yet)",
-        description="WP2 accepts arguments only; analysis and reports are not yet available.",
+        help="read Git changes (coverage analysis not implemented yet)",
+        description="WP3 reads Git changes; coverage analysis and reports are not yet available.",
         allow_abbrev=False,
     )
     analyze.add_argument("--repo", type=Path, default=Path("."), help="Git repository (default: .)")
@@ -35,10 +36,11 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def analyze(request: AnalysisRequest) -> None:
-    """Reserved pipeline boundary; never fabricate a successful empty report."""
+    """Resolve changed code, then explicitly stop before unavailable coverage stages."""
+    changes = read_git_diff(request.repo, request.base, request.head)
     raise AnalysisNotImplementedError(
-        "analysis is not implemented yet (WP2 bootstrap); "
-        "Git diff, coverage mapping, metrics and reports follow in WP3-WP9."
+        "coverage analysis and reports are not implemented yet (WP4-WP9); "
+        f"Git diff resolved {len(changes.files)} changed files."
     )
 
 

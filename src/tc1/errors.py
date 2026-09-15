@@ -15,3 +15,11 @@ class ModelValidationError(TC1Error, ValueError):
 
 class AnalysisNotImplementedError(TC1Error):
     """The CLI is installed, but the analysis pipeline is not available yet."""
+
+
+class GitDiffError(InputError):
+    """Repository, revision, history or Git execution failure."""
+
+
+class DiffParseError(InputError):
+    """Malformed or unsupported Git diff evidence."""

@@ -1,0 +1,8 @@
+diff --git a/src/Removed.cs b/src/Removed.cs
+deleted file mode 100644
+index 1111111..0000000
+--- a/src/Removed.cs
++++ /dev/null
+@@ -1,2 +0,0 @@
+-class Removed
+-{}

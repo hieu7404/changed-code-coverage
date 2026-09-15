@@ -81,6 +81,11 @@ Handle explicitly:
 - binary files;
 - rename/copy limitations.
 
+Exit (validated): resolved revisions and a unique merge base; deterministic head-line
+candidates across files/hunks; visible deleted/binary/type limitations; reviewed
+fixtures and real-Git integration tests. Rename/copy detection is disabled explicitly.
+See [WP3 implementation and validation](15_GIT_DIFF_PARSER.md).
+
 ## WP4 — Cobertura parser
 
 Parse:

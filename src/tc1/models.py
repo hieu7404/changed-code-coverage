@@ -140,3 +140,48 @@ summary contracts will be extended in their work packages before report generati
     lines: tuple[LineResult, ...] = ()
     branches: tuple[BranchResult, ...] = ()
     excluded_lines: tuple[ExcludedLine, ...] = ()
+
+
+class ChangeKind(StrEnum):
+    ADDED = "added"
+    MODIFIED = "modified"
+    DELETED = "deleted"
+    TYPE_CHANGED = "type_changed"
+
+
+@dataclass(frozen=True)
+class DiffHunk:
+    """Validated coordinates; added lines use head numbering, removed lines use merge-base."""
+
+    old_start: int
+    old_count: int
+    new_start: int
+    new_count: int
+    added_lines: tuple[int, ...] = ()
+    removed_lines: tuple[int, ...] = ()
+
+
+@dataclass(frozen=True)
+class FileChange:
+    """Git evidence only. Unavailable reasons are not coverage exclusions."""
+
+    path: str
+    kind: ChangeKind
+    old_mode: str
+    new_mode: str
+    hunks: tuple[DiffHunk, ...] = ()
+    is_binary: bool = False
+    unavailable_reason: str | None = None
+
+    @property
+    def changed_lines(self) -> tuple[int, ...]:
+        return tuple(line for hunk in self.hunks for line in hunk.added_lines)
+
+
+@dataclass(frozen=True)
+class GitDiffResult:
+    repo_root: Path
+    base_commit: str
+    head_commit: str
+    merge_base: str
+    files: tuple[FileChange, ...] = ()

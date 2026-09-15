@@ -1,0 +1,9 @@
+diff --git a/src/Service.cs b/src/Service.cs
+index 1111111..2222222 100644
+--- a/src/Service.cs
++++ b/src/Service.cs
+@@ -1 +1 @@
+-before
+\ No newline at end of file
++after
+\ No newline at end of file

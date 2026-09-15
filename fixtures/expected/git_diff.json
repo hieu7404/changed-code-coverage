@@ -1,0 +1,112 @@
+{
+  "modified_multiple_hunks.patch": {
+    "added": [
+      2,
+      3,
+      11
+    ],
+    "removed": [
+      2,
+      10
+    ],
+    "ranges": [
+      [
+        2,
+        1,
+        2,
+        2
+      ],
+      [
+        10,
+        1,
+        11,
+        1
+      ]
+    ],
+    "binary": false
+  },
+  "added.patch": {
+    "added": [
+      1,
+      2,
+      3
+    ],
+    "removed": [],
+    "ranges": [
+      [
+        0,
+        0,
+        1,
+        3
+      ]
+    ],
+    "binary": false
+  },
+  "deleted.patch": {
+    "added": [],
+    "removed": [
+      1,
+      2
+    ],
+    "ranges": [
+      [
+        1,
+        2,
+        0,
+        0
+      ]
+    ],
+    "binary": false
+  },
+  "deletion_only.patch": {
+    "added": [],
+    "removed": [
+      2,
+      3
+    ],
+    "ranges": [
+      [
+        2,
+        2,
+        1,
+        0
+      ]
+    ],
+    "binary": false
+  },
+  "no_newline.patch": {
+    "added": [
+      1
+    ],
+    "removed": [
+      1
+    ],
+    "ranges": [
+      [
+        1,
+        1,
+        1,
+        1
+      ]
+    ],
+    "binary": false
+  },
+  "binary.patch": {
+    "added": [],
+    "removed": [],
+    "ranges": [],
+    "binary": true
+  },
+  "empty_added.patch": {
+    "added": [],
+    "removed": [],
+    "ranges": [],
+    "binary": false
+  },
+  "mode_only.patch": {
+    "added": [],
+    "removed": [],
+    "ranges": [],
+    "binary": false
+  }
+}

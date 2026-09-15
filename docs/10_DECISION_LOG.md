@@ -139,6 +139,24 @@ renderers will consume one `AnalysisResult`; metrics stay in WP8. These internal
 models can evolve with parser/mapping work before the public report schema is finalized.
 See [WP2 contracts and reproduction](14_PYTHON_BOOTSTRAP.md).
 
+## D016 — Explicit merge-base comparison and Git diff limitations
+**Accepted**
+
+WP3 resolves base/head to commits, requires exactly one merge base, and compares
+merge-base to head (`base...head` semantics). Missing or ambiguous history fails
+explicitly. Staged/unstaged/untracked content does not enter the committed diff.
+
+Use NUL-delimited raw inventory and literal per-file patches so paths are not guessed
+from quoted headers. Disable external diff/textconv, rename detection and context;
+validate hunk bodies before accepting head-line candidates. Preserve file kinds,
+modes, binary flags and unavailable reasons. Deleted/binary/non-regular files remain
+visible without fabricated source candidates or automatic coverage exclusions.
+
+Renames are deleted plus added; copies are added. No rename/copy identity is inferred.
+Coverage classification and denominator logic remain in later work packages.
+The CLI now reads Git changes then exits explicitly before the unavailable WP4-WP9 stages.
+See [WP3 validation and limitations](15_GIT_DIFF_PARSER.md).
+
 ## Pending decisions
 
 Fill during implementation:

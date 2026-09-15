@@ -51,6 +51,7 @@ src/tc1/
 ├── cli.py
 ├── models.py
 ├── git_diff.py
+├── diff_parser.py
 ├── cobertura.py
 ├── path_normalizer.py
 ├── matcher.py
@@ -62,13 +63,17 @@ src/tc1/
 └── errors.py
 ```
 
-### WP2 implementation boundary
+### WP3 implementation boundary
 
-The package currently implements `cli.py`, `models.py`, `errors.py`, and package/module
-entry points. The other modules above are planned. Frozen dataclasses preserve raw
-line/condition evidence, three-state line findings, branch aggregates and explicit
-line exclusions in one shared `AnalysisResult`. Metrics are deferred to WP8.
-See [the model and CLI contract](14_PYTHON_BOOTSTRAP.md).
+The package implements CLI/package entry points, models, errors, Git acquisition
+(`git_diff.py`) and pure raw/patch parsing (`diff_parser.py`). The remaining modules
+are planned. Git acquisition produces `GitDiffResult` with resolved base/head,
+merge-base, file kinds and head-line candidates, without inferring coverage.
+
+Frozen dataclasses preserve raw line/condition evidence, three-state line findings,
+branch aggregates and explicit line exclusions for one shared `AnalysisResult`.
+Metrics are deferred to WP8. See [WP2 models](14_PYTHON_BOOTSTRAP.md) and
+[WP3 comparison and CLI contract](15_GIT_DIFF_PARSER.md).
 
 ## Classification rules
 

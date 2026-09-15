@@ -2,6 +2,9 @@
 
 ## Status
 
+This document records the WP2 baseline. WP3 now implements Git acquisition;
+see [current comparison and CLI behavior](15_GIT_DIFF_PARSER.md).
+
 **WP2 complete.** Validated on Windows with Python 3.14.6 and pytest 9.1.1:
 43 tests passed. TC1 0.1.0 installs in a repository-local virtual environment.
 Runtime code uses the standard library; pytest is a development dependency.

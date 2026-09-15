@@ -76,21 +76,24 @@ def test_argument_defaults(monkeypatch):
     assert received == [AnalysisRequest(Path("."), "main", "HEAD", Path("coverage.xml"))]
 
 
-def test_unimplemented_analysis_preserves_existing_output(tmp_path):
-    output = tmp_path / "report.json"
+def test_unimplemented_analysis_preserves_existing_output(tmp_path, git_repo):
+    git_repo.commit()
+    output = tmp_path / "output" / "report.json"
+    output.parent.mkdir()
     output.write_text("existing evidence", encoding="utf-8")
     result = subprocess.run(
-        [sys.executable, "-m", "tc1", "analyze", "--base", "main",
+        [sys.executable, "-m", "tc1", "analyze", "--repo", str(git_repo.path), "--base", "HEAD",
          "--coverage", "missing.xml", "--json", str(output),
          "--markdown", "report.md", "--html", "index.html"],
-        cwd=tmp_path, capture_output=True, text=True, check=False,
+        cwd=output.parent, capture_output=True, text=True, check=False,
     )
     assert result.returncode == 1
     assert result.stdout == ""
-    assert "analysis is not implemented yet" in result.stderr
+    assert "coverage analysis and reports are not implemented yet" in result.stderr
+    assert "Git diff resolved 0 changed files" in result.stderr
     assert "Traceback" not in result.stderr
     assert output.read_text(encoding="utf-8") == "existing evidence"
-    assert sorted(path.name for path in tmp_path.iterdir()) == ["report.json"]
+    assert sorted(path.name for path in output.parent.iterdir()) == ["report.json"]
 
 
 @pytest.mark.parametrize("error", [InputError, ModelValidationError])
@@ -112,3 +115,12 @@ def test_programming_errors_are_not_hidden(monkeypatch):
     monkeypatch.setattr(cli, "analyze", fail)
     with pytest.raises(RuntimeError, match="implementation defect"):
         cli.main(["analyze", "--base", "main", "--coverage", "coverage.xml"])
+
+def test_analyze_reports_git_input_errors(git_repo, capsys):
+    git_repo.commit()
+    assert cli.main(["analyze", "--repo", str(git_repo.path), "--base", "missing",
+                     "--coverage", "unused.xml"]) == 1
+    error = capsys.readouterr().err
+    assert "Git rev-parse failed" in error
+    assert "not implemented" not in error
+    assert "Traceback" not in error

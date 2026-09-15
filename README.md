@@ -92,10 +92,11 @@ Branches
 
 ## Current implementation
 
-WP0, WP1 and WP2 are complete: the C# sample has a validated coverage baseline,
-and the Python package provides CLI entry points, shared models, errors and pytest.
-The analysis pipeline remains WP3-WP9. See [Python setup and CLI](docs/14_PYTHON_BOOTSTRAP.md)
-for installation, commands and current limitations.
+WP0-WP3 are complete: the C# sample has a validated coverage baseline, the Python
+package is installed, and Git diff acquisition identifies changed head-line candidates.
+Coverage parsing, mapping, metrics and reports remain WP4-WP9.
+See [Python setup](docs/14_PYTHON_BOOTSTRAP.md) and
+[Git diff and current CLI behavior](docs/15_GIT_DIFF_PARSER.md).
 
 ## Important scope rule
 

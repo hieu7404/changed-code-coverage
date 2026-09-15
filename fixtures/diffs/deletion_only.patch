@@ -1,0 +1,7 @@
+diff --git a/src/Service.cs b/src/Service.cs
+index 1111111..2222222 100644
+--- a/src/Service.cs
++++ b/src/Service.cs
+@@ -2,2 +1,0 @@
+-removed line two
+-removed line three
