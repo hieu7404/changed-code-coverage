@@ -20,11 +20,15 @@ See [coverage baseline evidence](13_COVERAGE_BASELINE.md).
 - [x] Manually verify known lines/branches
 
 ## WP2
-- [ ] Create Python package
-- [ ] Add CLI
-- [ ] Add pytest
-- [ ] Add core models
-- [ ] Add error types
+
+Validated: editable installation, both CLI entry points, and 43 passing pytest cases.
+See [Python bootstrap evidence and limitations](14_PYTHON_BOOTSTRAP.md).
+
+- [x] Create Python package
+- [x] Add CLI
+- [x] Add pytest
+- [x] Add core models
+- [x] Add error types
 
 ## WP3
 - [ ] Resolve base/head

@@ -57,7 +57,16 @@ python -m venv .venv
 
 Activate it using the command appropriate for the local shell.
 
-Later, when `pyproject.toml` exists, install the project in editable mode.
+Install the WP2 package and development dependencies from the repository root:
+
+```powershell
+.venv/Scripts/python.exe -m pip install --cache-dir artifacts/tools/pip-cache -e ".[dev]"
+.venv/Scripts/python.exe -m tc1 --help
+.venv/Scripts/python.exe -m pytest --junitxml=artifacts/test-results/wp2/pytest.xml
+```
+
+On POSIX use `.venv/bin/python`. See [WP2 bootstrap](14_PYTHON_BOOTSTRAP.md)
+for the full CLI contract and validation limits.
 
 ## Local sample strategy
 
@@ -132,4 +141,4 @@ Its SDK selection and exact restore/build/test commands are documented in
 [sample-dotnet/README.md](../sample-dotnet/README.md), including optional
 repository-local SDK installation when the machine has only a runtime.
 Run from the sample directory to honor its global.json.
-Python package creation and pytest setup remain WP2.
+Python package creation and pytest setup are complete in [WP2](14_PYTHON_BOOTSTRAP.md).

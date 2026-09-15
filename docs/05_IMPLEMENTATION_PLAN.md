@@ -50,6 +50,18 @@ Add:
 - pytest;
 - errors.
 
+Exit (validated):
+
+```text
+editable package install succeeds
+tc1 --help / --version work
+python -m tc1 uses the same CLI
+pytest passes
+analyze reports not implemented and writes no artifacts
+```
+
+See [WP2 implementation and validation](14_PYTHON_BOOTSTRAP.md).
+
 ## WP3 — Git diff parser
 
 Use a narrow zero-context diff such as:

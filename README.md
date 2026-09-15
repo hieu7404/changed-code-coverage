@@ -90,6 +90,13 @@ Branches
   coverage:     66.67%
 ```
 
+## Current implementation
+
+WP0, WP1 and WP2 are complete: the C# sample has a validated coverage baseline,
+and the Python package provides CLI entry points, shared models, errors and pytest.
+The analysis pipeline remains WP3-WP9. See [Python setup and CLI](docs/14_PYTHON_BOOTSTRAP.md)
+for installation, commands and current limitations.
+
 ## Important scope rule
 
 The MVP is **not** an AI code-review agent.

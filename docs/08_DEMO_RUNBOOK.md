@@ -49,7 +49,11 @@ artifacts/tc1/coverage/
 
 ### 5. Run TC1
 
-Illustrative future CLI:
+WP2 accepts the arguments below, but `analyze` currently exits 1 with an explicit
+not-implemented message and writes no reports. The end-to-end demo becomes available
+after WP3-WP9. See [Python installation and CLI](14_PYTHON_BOOTSTRAP.md).
+
+Target analysis invocation:
 
 ```bash
 tc1 analyze \

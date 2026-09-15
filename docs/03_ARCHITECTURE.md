@@ -46,6 +46,8 @@ JSON / Markdown / HTML
 
 ```text
 src/tc1/
+├── __init__.py
+├── __main__.py
 ├── cli.py
 ├── models.py
 ├── git_diff.py
@@ -59,6 +61,14 @@ src/tc1/
 ├── report_html.py
 └── errors.py
 ```
+
+### WP2 implementation boundary
+
+The package currently implements `cli.py`, `models.py`, `errors.py`, and package/module
+entry points. The other modules above are planned. Frozen dataclasses preserve raw
+line/condition evidence, three-state line findings, branch aggregates and explicit
+line exclusions in one shared `AnalysisResult`. Metrics are deferred to WP8.
+See [the model and CLI contract](14_PYTHON_BOOTSTRAP.md).
 
 ## Classification rules
 

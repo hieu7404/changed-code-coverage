@@ -92,7 +92,7 @@ root is the starting directory and use no machine-specific paths.
 - WP0 evidence: artifacts/test-results/wp0/sample-tests.trx.
 - WP1 baseline: 10/12 instrumented lines and 5/6 branch outcomes covered (83.33% each).
 - The 20% return at L16 has zero hits; L13 has positive hits but branch coverage is 1/2.
-- Python bootstrap remains WP2.
+- Python bootstrap is complete; see [WP2 setup](../docs/14_PYTHON_BOOTSTRAP.md).
 
 ## Collect coverage
 

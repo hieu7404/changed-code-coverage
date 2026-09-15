@@ -121,6 +121,24 @@ outcomes covered, and preserves raw/bundled XML hashes. Branch evidence is aggre
 positive hits at a partially covered condition still mean the line is covered.
 See [WP1 baseline evidence and limitations](13_COVERAGE_BASELINE.md).
 
+## D015 — Python bootstrap and explicit CLI boundary
+**Accepted**
+
+WP2 uses a setuptools `src/` package, Python 3.11+, standard-library runtime code,
+argparse, and pytest as a development extra. Both `tc1` and `python -m tc1` use the
+same entry point and installed package version. Installation is local to `.venv/`.
+Validated on Windows / Python 3.14.6 with pytest 9.1.1 and 43 passing tests.
+
+The CLI accepts the runbook's analysis arguments but raises an explicit expected
+error (exit 1) until the pipeline exists; help/version exit 0 and usage errors exit 2.
+No report, metric, or implicit threshold is produced by the bootstrap.
+
+Frozen records preserve opaque paths, explicit hits, raw condition metadata and
+aggregate branch counts. Unknown and explicit exclusions remain distinct. All future
+renderers will consume one `AnalysisResult`; metrics stay in WP8. These internal
+models can evolve with parser/mapping work before the public report schema is finalized.
+See [WP2 contracts and reproduction](14_PYTHON_BOOTSTRAP.md).
+
 ## Pending decisions
 
 Fill during implementation:
