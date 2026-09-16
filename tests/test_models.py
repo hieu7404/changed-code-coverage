@@ -1,4 +1,4 @@
-"""Check evidence invariants without implementing the future mapper or metrics."""
+"""Check immutable evidence and metric-summary invariants."""
 
 from dataclasses import FrozenInstanceError
 
@@ -6,8 +6,8 @@ import pytest
 
 from tc1.errors import ModelValidationError
 from tc1.models import (
-    AnalysisResult, BranchAggregate, BranchResult, ConditionEvidence,
-    CoverageStatus, ExcludedLine, LineCoverage, LineResult, SourceLocation,
+    AnalysisMetrics, AnalysisResult, BranchAggregate, BranchResult, ConditionEvidence,
+    CoverageStatus, CoverageSummary, ExcludedLine, LineCoverage, LineResult, SourceLocation,
 )
 
 
@@ -83,6 +83,14 @@ def test_branch_aggregate_and_unknown_location_are_distinct(location):
     result = AnalysisResult("base", "head", branches=(partial, unknown))
     assert result.branches[0].aggregate == BranchAggregate(1, 2)
     assert result.branches[1].aggregate is None
+
+
+def test_analysis_result_accepts_only_summary_metrics(location):
+    summary = CoverageSummary(1, 1, 1, 0, 0, 0)
+    metrics = AnalysisMetrics(summary, summary)
+    assert AnalysisResult("base", "head", metrics=metrics).metrics == metrics
+    with pytest.raises(ModelValidationError):
+        AnalysisResult("base", "head", metrics=summary)
 
 
 @pytest.mark.parametrize("factory", [

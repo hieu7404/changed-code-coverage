@@ -73,10 +73,10 @@ See [Cobertura evidence and limitations](16_COBERTURA_PARSER.md).
 - [x] Tests
 
 ## WP8
-- [ ] Line denominator
-- [ ] Branch denominator
-- [ ] Unknown/exclusion counts
-- [ ] Null coverage case
+- [x] Line denominator
+- [x] Branch denominator
+- [x] Unknown/exclusion counts
+- [x] Null coverage case
 
 ## WP9
 - [ ] JSON
@@ -99,7 +99,7 @@ See [Cobertura evidence and limitations](16_COBERTURA_PARSER.md).
 - [ ] Controlled fixtures pass and sampled diff mappings are manually validated
 - [ ] Report-only CI
 
-## WP13 — Optional, post-MVP
+## WP13 â€” Optional, post-MVP
 - [ ] Mapping validated and unknown rate understood
 - [ ] Explicit user/team approval and threshold policy
 - [ ] Optional gate only after the above conditions

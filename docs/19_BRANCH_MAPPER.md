@@ -46,8 +46,8 @@ the branch denominator from source lines that cannot be known to contain a branc
 
 ## CLI boundary
 
-`tc1 analyze` maps changed lines and reliable branch aggregates, then stops with an
-explicit WP8-WP9 error. The CLI does not calculate metrics or write reports.
+	c1 analyze now maps changed lines and reliable branch aggregates, computes WP8
+metrics, then stops with an explicit WP9 report error. It does not write reports.
 
 ## Validation
 
@@ -64,6 +64,6 @@ Git result ordering.
 ## Limitations
 
 - Branch candidates are collector-evidence-based, not source-syntax-based.
-- Percentage denominators and report rendering remain WP8/WP9.
+- Report rendering remains WP9; denominator semantics are defined in [WP8 metrics](20_METRICS.md).
 
-Next bounded step: **WP8 metrics**.
+Next bounded step: **WP9 reports**.

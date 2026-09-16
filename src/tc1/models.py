@@ -1,10 +1,10 @@
-"""Shared immutable records. Parsing, mapping and metrics belong to later WPs.
+"""Shared immutable records. Parsing and mapping populate the metrics-ready result.
 
 Paths are preserved as supplied; these records do not normalize or guess matches.
 Line numbers are one-based. Exclusions are separate from coverage classification.
 """
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from enum import StrEnum
 from pathlib import Path
 
@@ -131,18 +131,64 @@ class ExcludedLine:
 
 
 @dataclass(frozen=True)
-class AnalysisResult:
-    """Shared result container for future renderers; no metrics are computed in WP2.
+class CoverageSummary:
+    """One changed-code coverage summary with a visible evidence breakdown.
 
-Base/head are supplied revision identifiers until WP3 resolves them. Mapping and
-summary contracts will be extended in their work packages before report generation.
-"""
+    ``coverage_percent`` is derived from classifiable outcomes only. Unknown and
+    excluded findings remain candidates but never enter that denominator.
+    """
+
+    candidates: int
+    classifiable: int
+    covered: int
+    uncovered: int
+    unknown: int
+    excluded: int
+    coverage_percent: float | None = field(init=False)
+
+    def __post_init__(self) -> None:
+        for name in ("candidates", "classifiable", "covered", "uncovered", "unknown", "excluded"):
+            _count(name, getattr(self, name))
+        if self.classifiable != self.covered + self.uncovered:
+            raise ModelValidationError("classifiable must equal covered + uncovered")
+        if self.candidates != self.classifiable + self.unknown + self.excluded:
+            raise ModelValidationError("candidates must equal classifiable + unknown + excluded")
+        percent = None if self.classifiable == 0 else (100 * self.covered / self.classifiable)
+        object.__setattr__(self, "coverage_percent", percent)
+
+
+@dataclass(frozen=True)
+class AnalysisMetrics:
+    """Line and branch summaries derived from one ``AnalysisResult``."""
+
+    lines: CoverageSummary
+    branches: CoverageSummary
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.lines, CoverageSummary):
+            raise ModelValidationError("lines must be a CoverageSummary")
+        if not isinstance(self.branches, CoverageSummary):
+            raise ModelValidationError("branches must be a CoverageSummary")
+
+
+@dataclass(frozen=True)
+class AnalysisResult:
+    """Shared result container for metrics and future renderers.
+
+    Base/head are supplied revision identifiers until WP3 resolves them. Mapping,
+    metrics, and all future renderers share this immutable record.
+    """
 
     base: str
     head: str
     lines: tuple[LineResult, ...] = ()
     branches: tuple[BranchResult, ...] = ()
     excluded_lines: tuple[ExcludedLine, ...] = ()
+    metrics: AnalysisMetrics | None = None
+
+    def __post_init__(self) -> None:
+        if self.metrics is not None and not isinstance(self.metrics, AnalysisMetrics):
+            raise ModelValidationError("metrics must be an AnalysisMetrics or None")
 
 
 class ChangeKind(StrEnum):

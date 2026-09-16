@@ -8,7 +8,7 @@ The mapper is deterministic.
 test execution evidence
 +
 Git change evidence
-↓
+â†“
 deterministic mapping
 ```
 
@@ -18,27 +18,27 @@ No LLM is needed for MVP correctness.
 
 ```text
 C# pilot
-  ↓
+  â†“
 tests
-  ↓
+  â†“
 coverage collector
-  ↓
+  â†“
 Cobertura XML
         +
 Git base/head
-  ↓
+  â†“
 git diff
-        ↓
+        â†“
 path normalization
-        ↓
+        â†“
 mapping engine
-        ↓
+        â†“
 covered / uncovered / unknown
-        ↓
+        â†“
 metrics
-        ↓
+        â†“
 AnalysisResult
-        ↓
+        â†“
 JSON / Markdown / HTML
 ```
 
@@ -46,37 +46,37 @@ JSON / Markdown / HTML
 
 ```text
 src/tc1/
-├── __init__.py
-├── __main__.py
-├── cli.py
-├── models.py
-├── git_diff.py
-├── diff_parser.py
-├── cobertura.py
-├── path_normalizer.py
-├── matcher.py
-├── branch_mapper.py
-├── metrics.py
-├── report_json.py
-├── report_markdown.py
-├── report_html.py
-└── errors.py
+â”œâ”€â”€ __init__.py
+â”œâ”€â”€ __main__.py
+â”œâ”€â”€ cli.py
+â”œâ”€â”€ models.py
+â”œâ”€â”€ git_diff.py
+â”œâ”€â”€ diff_parser.py
+â”œâ”€â”€ cobertura.py
+â”œâ”€â”€ path_normalizer.py
+â”œâ”€â”€ matcher.py
+â”œâ”€â”€ branch_mapper.py
+â”œâ”€â”€ metrics.py
+â”œâ”€â”€ report_json.py
+â”œâ”€â”€ report_markdown.py
+â”œâ”€â”€ report_html.py
+â””â”€â”€ errors.py
 ```
 
-### WP7 implementation boundary
+### WP8 implementation boundary
 
 The package implements CLI/package entry points, models, errors, Git acquisition
 (`git_diff.py`), pure raw/patch parsing (`diff_parser.py`), Cobertura parsing
 (`cobertura.py`), lexical path resolution (`path_normalizer.py`), line mapping
 (`matcher.py`), and branch mapping (`branch_mapper.py`). Git produces `GitDiffResult`;
 XML produces `CoverageReport`; mapping produces `LineResult` and aggregate `BranchResult`
-records in one `AnalysisResult`. Branch aggregates require reliable collector metadata;
+records in one `AnalysisResult`. WP8 derives and attaches one `AnalysisMetrics` value to that same result; future renderers consume it rather than recomputing metrics. Branch aggregates require reliable collector metadata;
 no semantic outcome identity is inferred.
 
 Cobertura class-level lines form the primary inventory; method lines remain separate.
 Duplicate records, source strings and raw branch metadata are preserved.
 Frozen dataclasses provide evidence and result records for one shared `AnalysisResult`.
-Metrics and reports remain WP8-WP9.
+Report rendering remains WP9.
 See [WP2 models](14_PYTHON_BOOTSTRAP.md), [Git comparison](15_GIT_DIFF_PARSER.md),
 and [WP7 branch mapping](19_BRANCH_MAPPER.md).
 
@@ -155,12 +155,12 @@ Recommended artifact:
 
 ```text
 artifacts/tc1/
-├── report.json
-├── report.md
-├── index.html
-├── coverage.cobertura.xml
-└── coverage/
-    └── ReportGenerator HTML
+â”œâ”€â”€ report.json
+â”œâ”€â”€ report.md
+â”œâ”€â”€ index.html
+â”œâ”€â”€ coverage.cobertura.xml
+â””â”€â”€ coverage/
+    â””â”€â”€ ReportGenerator HTML
 ```
 
 ## Generated output policy

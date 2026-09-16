@@ -1,6 +1,6 @@
 # Implementation Plan
 
-## WP0 — Bootstrap and local pilot
+## WP0 â€” Bootstrap and local pilot
 
 - read `AGENTS.md`;
 - verify Git/Python/.NET;
@@ -15,7 +15,7 @@ Exit:
 sample tests pass
 ```
 
-## WP1 — Coverage baseline
+## WP1 â€” Coverage baseline
 
 - add compatible coverage collection;
 - produce coverage export;
@@ -33,7 +33,7 @@ artifacts/tc1/coverage/ (ReportGenerator HTML)
 
 Raw collector exports and test-run results go under `artifacts/test-results/`.
 
-## WP2 — Python bootstrap
+## WP2 â€” Python bootstrap
 
 Create:
 
@@ -62,7 +62,7 @@ analyze reports not implemented and writes no artifacts
 
 See [WP2 implementation and validation](14_PYTHON_BOOTSTRAP.md).
 
-## WP3 — Git diff parser
+## WP3 â€” Git diff parser
 
 Use a narrow zero-context diff such as:
 
@@ -86,7 +86,7 @@ candidates across files/hunks; visible deleted/binary/type limitations; reviewed
 fixtures and real-Git integration tests. Rename/copy detection is disabled explicitly.
 See [WP3 implementation and validation](15_GIT_DIFF_PARSER.md).
 
-## WP4 — Cobertura parser
+## WP4 â€” Cobertura parser
 
 Parse:
 - filename;
@@ -100,7 +100,7 @@ Exit (validated): exact class-level line/hit records; method evidence kept separ
 source/branch metadata preserved; malformed inputs rejected; controlled fixtures and
 the actual WP1 export checked. See [WP4 implementation](16_COBERTURA_PARSER.md).
 
-## WP5 — Path normalization
+## WP5 â€” Path normalization
 
 Normalize:
 - slash direction;
@@ -119,14 +119,14 @@ multiple changed Git paths, or multiple classes that name one Git path, is expli
 
 See [WP5 implementation and validation](17_PATH_NORMALIZATION.md).
 
-## WP6 — Line mapper
+## WP6 â€” Line mapper
 
 For each changed line:
 
 ```text
-mapped + hits > 0 → covered
-mapped + hits = 0 → uncovered
-missing/ambiguous → unknown
+mapped + hits > 0 â†’ covered
+mapped + hits = 0 â†’ uncovered
+missing/ambiguous â†’ unknown
 ```
 
 Exit (validated): each changed head line becomes `covered` only from one explicit
@@ -136,7 +136,7 @@ with visible reasons. Method evidence is never used as a class-line fallback.
 
 See [WP6 implementation and validation](18_LINE_MAPPER.md).
 
-## WP7 — Branch mapper
+## WP7 â€” Branch mapper
 
 Map changed branch evidence only when reliable.
 
@@ -155,7 +155,7 @@ without a collector branch signal do not become branch candidates.
 
 See [WP7 implementation and validation](19_BRANCH_MAPPER.md).
 
-## WP8 — Metrics
+## WP8 â€” Metrics
 
 Produce separate line and branch summaries:
 
@@ -169,7 +169,16 @@ excluded
 coverage_percent
 ```
 
-## WP9 — Reports
+Exit (validated): metrics are derived once from mapped evidence and attached to the
+shared `AnalysisResult`. Line and branch percentages use only covered plus uncovered
+outcomes; unknown and excluded findings remain visible. A zero denominator is `null`,
+never `0%`. An unknown branch finding counts as one visible unknown candidate because
+its number of outcomes is not known; a reliable aggregate contributes its reported
+outcome count.
+
+See [WP8 metrics](20_METRICS.md).
+
+## WP9 â€” Reports
 
 Generate from one shared `AnalysisResult`:
 
@@ -181,7 +190,7 @@ artifacts/tc1/index.html
 
 Bundle/link ReportGenerator coverage HTML.
 
-## WP10 — Evaluation
+## WP10 â€” Evaluation
 
 Build controlled cases for:
 - fully covered;
@@ -200,7 +209,7 @@ Commit reviewed cases and expected results under `fixtures/` and `eval/`.
 Write generated evaluation results to `artifacts/eval/<run-id>/` and durable findings
 to `docs/`, following the [output policy](03_ARCHITECTURE.md#generated-output-policy).
 
-## WP11 — Real-pilot readiness
+## WP11 â€” Real-pilot readiness
 
 When a real repository becomes available:
 
@@ -212,7 +221,7 @@ When a real repository becomes available:
 
 Do not change core architecture just because the pilot changes.
 
-## WP12 — Optional report-only CI
+## WP12 â€” Optional report-only CI
 
 Only after controlled fixtures pass and sampled diff mappings have been manually validated.
 Use real-pilot diffs when available; otherwise document the controlled sample and its
@@ -222,17 +231,17 @@ Pipeline:
 
 ```text
 test
-↓
+â†“
 coverage
-↓
+â†“
 TC1
-↓
+â†“
 upload artifact
 ```
 
 No blocking gate.
 
-## WP13 — Optional CI gate
+## WP13 â€” Optional CI gate
 
 Post-MVP only, with explicit user/team approval.
 

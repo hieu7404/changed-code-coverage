@@ -1,4 +1,4 @@
-"""Acquire, path-normalize and map changed lines/branches; later stages follow in WP8-WP9."""
+"""Acquire, map and summarize changed code; reporting follows in WP9."""
 
 import argparse
 import sys
@@ -10,21 +10,22 @@ from tc1.cobertura import read_cobertura
 from tc1.errors import AnalysisNotImplementedError, TC1Error
 from tc1.git_diff import read_git_diff
 from tc1.matcher import map_changed_code
+from tc1.metrics import attach_metrics
 from tc1.models import AnalysisRequest
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="tc1",
-        description="Changed-Code Coverage Analyzer (WP7 branch mapping).",
+        description="Changed-Code Coverage Analyzer (WP8 metrics).",
         allow_abbrev=False,
     )
     parser.add_argument("--version", action="version", version=f"tc1 {__version__}")
     commands = parser.add_subparsers(dest="command", required=True)
     analyze = commands.add_parser(
         "analyze",
-        help="read Git and Cobertura inputs (metrics and reports are not yet available)",
-        description="WP7 maps changed lines and reliable branch aggregates; metrics and reports are not yet available.",
+        help="read Git and Cobertura inputs (reports are not yet available)",
+        description="WP8 maps changed code and computes metrics; reports are not yet available.",
         allow_abbrev=False,
     )
     analyze.add_argument("--repo", type=Path, default=Path("."), help="Git repository (default: .)")
@@ -38,16 +39,20 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def analyze(request: AnalysisRequest) -> None:
-    """Read, map changed lines/branches, then stop before WP8-WP9."""
+    """Read, map and summarize changed code, then stop before WP9 reports."""
     changes = read_git_diff(request.repo, request.base, request.head)
     coverage = read_cobertura(request.coverage)
-    analysis = map_changed_code(changes, coverage)
+    analysis = attach_metrics(map_changed_code(changes, coverage))
     raise AnalysisNotImplementedError(
-        "metrics and reports are not implemented yet (WP8-WP9); "
+        "reports are not implemented yet (WP9); "
         f"Git diff resolved {len(changes.files)} changed files; "
         f"Cobertura parsed {len(coverage.line_entries)} class-level line entries; "
         f"line mapper produced {len(analysis.lines)} changed-line results; "
-        f"branch mapper produced {len(analysis.branches)} changed-branch results."
+        f"branch mapper produced {len(analysis.branches)} changed-branch results; "
+        f"line metrics classify {analysis.metrics.lines.classifiable} of "
+        f"{analysis.metrics.lines.candidates} candidates; "
+        f"branch metrics classify {analysis.metrics.branches.classifiable} of "
+        f"{analysis.metrics.branches.candidates} candidates."
     )
 
 

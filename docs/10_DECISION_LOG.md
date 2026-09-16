@@ -1,31 +1,31 @@
 # Decision Log
 
-## D001 — Standalone portable repository
+## D001 â€” Standalone portable repository
 **Accepted**
 
 No absolute machine-specific paths or dependency on the old DMS workspace.
 
-## D002 — Local controlled sample first
+## D002 â€” Local controlled sample first
 **Accepted**
 
 Build/validate TC1 against a small C# sample before real company access is available.
 
-## D003 — One real C# pilot later
+## D003 â€” One real C# pilot later
 **Accepted**
 
 When access becomes available, validate TC1 on one existing C# project rather than widening to all languages.
 
-## D004 — Existing test runner
+## D004 â€” Existing test runner
 **Accepted**
 
 Reuse the pilot's test framework.
 
-## D005 — Cobertura XML
+## D005 â€” Cobertura XML
 **Accepted**
 
 Use Cobertura XML as the initial normalized coverage format.
 
-## D006 — Deterministic Python mapper
+## D006 â€” Deterministic Python mapper
 **Accepted**
 
 Python handles:
@@ -36,7 +36,7 @@ Python handles:
 - metrics;
 - TC1-specific reports.
 
-## D007 — Three-state result
+## D007 â€” Three-state result
 **Accepted**
 
 ```text
@@ -45,22 +45,22 @@ uncovered
 unknown
 ```
 
-## D008 — Branch coverage only where reliable
+## D008 â€” Branch coverage only where reliable
 **Accepted**
 
 Do not invent branch semantics.
 
-## D009 — ReportGenerator as supporting visualization
+## D009 â€” ReportGenerator as supporting visualization
 **Accepted**
 
 It does not replace TC1 mapping.
 
-## D010 — CI starts non-blocking
+## D010 â€” CI starts non-blocking
 **Accepted**
 
 Gate only after mapping validation and explicit threshold decision.
 
-## D011 — Generated output under artifacts
+## D011 â€” Generated output under artifacts
 **Accepted**
 
 All generated reports, coverage exports, test-run results/logs, and evaluation results
@@ -73,7 +73,7 @@ The [architecture output policy](03_ARCHITECTURE.md#generated-output-policy) def
 the subdirectories. Ignore the artifact root rather than coverage filenames throughout
 the repository so coverage fixtures remain trackable.
 
-## D012 — Local sample SDK and test framework
+## D012 â€” Local sample SDK and test framework
 **Accepted**
 
 WP0 confirmed SDK 10.0.401 can build the `net10.0` sample and run 7 passing tests.
@@ -90,7 +90,7 @@ The new sample uses xUnit 2.9.3, xunit.runner.visualstudio 3.1.4, and
 Microsoft.NET.Test.Sdk 17.14.1, as provided by the installed SDK's xUnit template.
 Coverage setup remains WP1; the template's collector reference was removed for WP0.
 
-## D013 — Controlled discount policy with an intentional test gap
+## D013 â€” Controlled discount policy with an intentional test gap
 **Accepted**
 
 Use one `DiscountService` with negative-input rejection, no discount below 100,
@@ -102,7 +102,7 @@ The 20% return path is deliberately untested. WP1 must verify coverage evidence;
 WP0 makes no measured line/branch coverage claim. No semantic branch identity is inferred.
 The Python folders contain placeholders only until WP2.
 
-## D014 — Validated sample coverage collector and visualization
+## D014 â€” Validated sample coverage collector and visualization
 **Accepted**
 
 WP1 validates Coverlet collector 6.0.4 with the existing xUnit/VSTest runner on
@@ -121,7 +121,7 @@ outcomes covered, and preserves raw/bundled XML hashes. Branch evidence is aggre
 positive hits at a partially covered condition still mean the line is covered.
 See [WP1 baseline evidence and limitations](13_COVERAGE_BASELINE.md).
 
-## D015 — Python bootstrap and explicit CLI boundary
+## D015 â€” Python bootstrap and explicit CLI boundary
 **Accepted**
 
 WP2 uses a setuptools `src/` package, Python 3.11+, standard-library runtime code,
@@ -139,7 +139,7 @@ renderers will consume one `AnalysisResult`; metrics stay in WP8. These internal
 models can evolve with parser/mapping work before the public report schema is finalized.
 See [WP2 contracts and reproduction](14_PYTHON_BOOTSTRAP.md).
 
-## D016 — Explicit merge-base comparison and Git diff limitations
+## D016 â€” Explicit merge-base comparison and Git diff limitations
 **Accepted**
 
 WP3 resolves base/head to commits, requires exactly one merge base, and compares
@@ -157,7 +157,7 @@ Coverage classification and denominator logic remain in later work packages.
 The CLI now reads Git changes then exits explicitly before the unavailable WP4-WP9 stages.
 See [WP3 validation and limitations](15_GIT_DIFF_PARSER.md).
 
-## D017 — Preserve Cobertura records before mapping
+## D017 â€” Preserve Cobertura records before mapping
 **Accepted**
 
 WP4 uses standard-library XML parsing for the validated Coverlet/Cobertura profile.
@@ -220,6 +220,22 @@ branch candidate safely.
 
 See [WP7 branch mapping](19_BRANCH_MAPPER.md).
 
+
+## D021 - One shared, outcome-based metric summary
+**Accepted**
+
+WP8 calculates line and branch metrics once from mapped evidence and attaches
+`AnalysisMetrics` to the immutable `AnalysisResult`; reports must consume that value
+rather than independently calculating percentages. A summary always exposes
+candidates, classifiable, covered, uncovered, unknown and excluded.
+
+Coverage is `covered / (covered + uncovered)` and is `null` if there is no
+classifiable evidence. Unknown and excluded findings remain visible but stay outside
+the denominator. A reliable branch aggregate contributes its collector-reported
+outcomes; an unknown branch result contributes one unknown finding without claiming a
+number of unavailable outcomes. There is currently no branch-exclusion input model.
+
+See [WP8 metrics](20_METRICS.md).
 
 Fill during implementation:
 ## Pending decisions

@@ -1,4 +1,4 @@
-# TC1 — Changed-Code Coverage Analyzer
+# TC1 Ã¢â‚¬â€ Changed-Code Coverage Analyzer
 
 TC1 is a small software-engineering/research side project that measures **coverage on changed code**, rather than relying only on repository-wide coverage.
 
@@ -10,14 +10,14 @@ TC1 is a small software-engineering/research side project that measures **covera
 
 ```text
 Git diff
-→ changed code
+Ã¢â€ â€™ changed code
 
 Coverage export
-→ executed code
+Ã¢â€ â€™ executed code
 
 Git diff + coverage
-→ TC1 mapper
-→ covered / uncovered / unknown
+Ã¢â€ â€™ TC1 mapper
+Ã¢â€ â€™ covered / uncovered / unknown
 ```
 
 ## Why this matters
@@ -92,15 +92,16 @@ Branches
 
 ## Current implementation
 
-WP0-WP7 are complete: the C# sample has a validated coverage baseline, and the Python
+WP0-WP8 are complete: the C# sample has a validated coverage baseline, and the Python
 tool reads Git changes and Cobertura evidence, resolves paths without guessing file
-identity, and maps changed lines and reliable branch aggregates. Metrics and reports remain WP8-WP9.
+identity, maps changed lines and reliable branch aggregates, and derives one shared line/branch metric summary. Unknown and excluded findings remain visible outside the coverage denominator; a zero denominator is `null`. Reports remain WP9.
 See [Python setup](docs/14_PYTHON_BOOTSTRAP.md),
 [Git diff](docs/15_GIT_DIFF_PARSER.md), and
 [Cobertura and current CLI behavior](docs/16_COBERTURA_PARSER.md), and
 [path normalization](docs/17_PATH_NORMALIZATION.md), and
 [line mapping](docs/18_LINE_MAPPER.md), and
-[branch mapping](docs/19_BRANCH_MAPPER.md).
+[branch mapping](docs/19_BRANCH_MAPPER.md), and
+[metrics](docs/20_METRICS.md).
 
 ## Important scope rule
 
