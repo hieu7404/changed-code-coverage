@@ -148,6 +148,13 @@ Ambiguous branch identity:
 unknown
 ```
 
+Exit (validated): a changed line with reliable `branch=true` aggregate metadata
+produces covered/total outcomes without semantic true/false labels. Malformed,
+contradictory or duplicate branch evidence stays an unknown `BranchResult`; lines
+without a collector branch signal do not become branch candidates.
+
+See [WP7 implementation and validation](19_BRANCH_MAPPER.md).
+
 ## WP8 — Metrics
 
 Produce separate line and branch summaries:

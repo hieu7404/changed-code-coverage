@@ -67,10 +67,10 @@ See [Cobertura evidence and limitations](16_COBERTURA_PARSER.md).
 - [x] Tests
 
 ## WP7
-- [ ] Branch representation
-- [ ] Aggregate conditions
-- [ ] Unknown on ambiguity
-- [ ] Tests
+- [x] Branch representation
+- [x] Aggregate conditions
+- [x] Unknown on ambiguity
+- [x] Tests
 
 ## WP8
 - [ ] Line denominator

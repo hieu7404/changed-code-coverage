@@ -1,10 +1,10 @@
-"""WP6 maps changed head lines without turning missing evidence into uncovered."""
+"""WP6/WP7 map changed evidence without turning missing data into uncovered."""
 
 from pathlib import Path
 
 from tc1.cobertura import parse_cobertura
-from tc1.matcher import map_changed_lines
-from tc1.models import ChangeKind, DiffHunk, FileChange, GitDiffResult, CoverageStatus
+from tc1.matcher import map_changed_code, map_changed_lines
+from tc1.models import BranchAggregate, ChangeKind, DiffHunk, FileChange, GitDiffResult, CoverageStatus
 
 
 def coverage(classes: str):
@@ -92,3 +92,15 @@ def test_order_is_git_file_hunk_line_order():
     assert [(item.location.path, item.location.line) for item in result.lines] == [
         ("src/A.cs", 8), ("src/A.cs", 10), ("src/B.cs", 2),
     ]
+
+
+def test_combined_result_keeps_line_and_branch_results_together():
+    report = coverage(
+        '<class filename="src/A.cs"><lines>'
+        '<line number="3" hits="4" branch="true" condition-coverage="50% (1/2)"/>'
+        '</lines></class>'
+    )
+    changes = GitDiffResult(Path("F:/repo"), "base", "head", "merge", (change("src/A.cs", 3),))
+    combined = map_changed_code(changes, report)
+    assert combined.lines[0].status is CoverageStatus.COVERED
+    assert combined.branches[0].aggregate == BranchAggregate(1, 2)

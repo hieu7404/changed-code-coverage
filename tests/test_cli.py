@@ -38,7 +38,7 @@ def test_analyze_help_explains_bootstrap(capsys):
     with pytest.raises(SystemExit) as exc:
         cli.main(["analyze", "--help"])
     assert exc.value.code == 0
-    assert "WP6 maps changed lines" in capsys.readouterr().out
+    assert "WP7 maps changed lines" in capsys.readouterr().out
 
 
 @pytest.mark.parametrize("args", [
@@ -91,7 +91,7 @@ def test_unimplemented_analysis_preserves_existing_output(tmp_path, git_repo):
     )
     assert result.returncode == 1
     assert result.stdout == ""
-    assert "branch mapping, metrics and reports are not implemented yet" in result.stderr
+    assert "metrics and reports are not implemented yet" in result.stderr
     assert "Cobertura parsed 0 class-level line entries" in result.stderr
     assert "Git diff resolved 0 changed files" in result.stderr
     assert "Traceback" not in result.stderr
@@ -164,5 +164,6 @@ def test_analyze_reads_canonical_cobertura_entries_before_stopping(git_repo, cap
     error = capsys.readouterr().err
     assert "Git diff resolved 0 changed files" in error
     assert "Cobertura parsed 12 class-level line entries" in error
-    assert "WP7-WP9" in error
+    assert "WP8-WP9" in error
     assert "line mapper produced 0 changed-line results" in error
+    assert "branch mapper produced 0 changed-branch results" in error

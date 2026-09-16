@@ -206,9 +206,24 @@ exclusions, denominators and rendering for later work packages.
 
 See [WP6 line mapping](18_LINE_MAPPER.md).
 
-## Pending decisions
+## D020 - Aggregate-only branch evidence
+**Accepted**
+
+WP7 reports branch coverage only as a collector aggregate at a changed line. A valid
+`branch=true` and `condition-coverage` count pair creates a covered/total aggregate;
+TC1 does not label any outcome as source-level true or false.
+
+Malformed, contradictory or repeated branch evidence creates an unknown branch result
+with a visible reason. No branch result is invented for a line with no collector branch
+signal, unmatched paths, or method-only evidence, because those do not identify a
+branch candidate safely.
+
+See [WP7 branch mapping](19_BRANCH_MAPPER.md).
+
 
 Fill during implementation:
+## Pending decisions
+
 
 
 ```text
