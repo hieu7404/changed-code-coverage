@@ -250,3 +250,9 @@ Real pilot collector:
 CI provider:
 Threshold policy:
 ```
+
+
+## D022 - Explicit report destinations and ReportGenerator evidence links
+**Accepted**
+
+WP9 accepts optional explicit JSON, Markdown and HTML destinations. It renders each requested artifact from one metrics-ready `AnalysisResult` and rejects colliding destinations. ReportGenerator remains a separate supporting visualization: the caller provides its HTML entry page through `--report-generator-html`; TC1 makes an output-relative link when possible and reports its availability without generating, copying or guessing coverage HTML. See [WP9 reports](21_REPORTS.md).

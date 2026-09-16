@@ -1,5 +1,6 @@
-"""Exercise the installed CLI and its failure/output contract."""
+"""Exercise the installed CLI and its report/output contract."""
 
+import json
 import subprocess
 import sys
 import sysconfig
@@ -34,11 +35,11 @@ def test_installed_console_script_version(tmp_path):
     assert result.stderr == ""
 
 
-def test_analyze_help_explains_bootstrap(capsys):
+def test_analyze_help_explains_reports(capsys):
     with pytest.raises(SystemExit) as exc:
         cli.main(["analyze", "--help"])
     assert exc.value.code == 0
-    assert "WP8 maps changed code" in capsys.readouterr().out
+    assert "write requested reports" in capsys.readouterr().out
 
 
 @pytest.mark.parametrize("args", [
@@ -61,11 +62,13 @@ def test_arguments_reach_pipeline_without_path_guessing(monkeypatch):
         "analyze", "--repo", "repo with spaces", "--base", "feature~1", "--head", "feature",
         "--coverage", "input/coverage.xml", "--json", "output/report.json",
         "--markdown", "output/report.md", "--html", "output/index.html",
+        "--report-generator-html", "output/coverage/index.html",
     ]) == 0
     assert received == [AnalysisRequest(
         repo=Path("repo with spaces"), base="feature~1", head="feature",
         coverage=Path("input/coverage.xml"), json_output=Path("output/report.json"),
         markdown_output=Path("output/report.md"), html_output=Path("output/index.html"),
+        report_generator_html=Path("output/coverage/index.html"),
     )]
 
 
@@ -76,27 +79,65 @@ def test_argument_defaults(monkeypatch):
     assert received == [AnalysisRequest(Path("."), "main", "HEAD", Path("coverage.xml"))]
 
 
-def test_unimplemented_analysis_preserves_existing_output(tmp_path, git_repo):
+def test_analyze_writes_requested_reports_and_links_supporting_evidence(git_repo, tmp_path, capsys):
     git_repo.commit()
-    output = tmp_path / "output" / "report.json"
-    output.parent.mkdir()
-    output.write_text("existing evidence", encoding="utf-8")
-    (output.parent / "coverage.xml").write_text("<coverage><packages/></coverage>", encoding="utf-8")
-    git_repo.write("coverage.xml", "<wrong-root/>")
-    result = subprocess.run(
-        [sys.executable, "-m", "tc1", "analyze", "--repo", str(git_repo.path), "--base", "HEAD",
-         "--coverage", "coverage.xml", "--json", str(output),
-         "--markdown", "report.md", "--html", "index.html"],
-        cwd=output.parent, capture_output=True, text=True, check=False,
-    )
-    assert result.returncode == 1
-    assert result.stdout == ""
-    assert "reports are not implemented yet" in result.stderr
-    assert "Cobertura parsed 0 class-level line entries" in result.stderr
-    assert "Git diff resolved 0 changed files" in result.stderr
-    assert "Traceback" not in result.stderr
-    assert output.read_text(encoding="utf-8") == "existing evidence"
-    assert sorted(path.name for path in output.parent.iterdir()) == ["coverage.xml", "report.json"]
+    output = tmp_path / "output"
+    output.mkdir()
+    coverage = output / "coverage.xml"
+    coverage.write_text("<coverage><packages/></coverage>", encoding="utf-8")
+    evidence = output / "coverage" / "index.html"
+    evidence.parent.mkdir()
+    evidence.write_text("<html>ReportGenerator</html>", encoding="utf-8")
+
+    assert cli.main([
+        "analyze", "--repo", str(git_repo.path), "--base", "HEAD", "--coverage", str(coverage),
+        "--json", str(output / "report.json"), "--markdown", str(output / "report.md"),
+        "--html", str(output / "index.html"), "--report-generator-html", str(evidence),
+    ]) == 0
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert captured.err == ""
+
+    report = json.loads((output / "report.json").read_text(encoding="utf-8"))
+    assert report["metrics"]["lines"] == {
+        "candidates": 0, "classifiable": 0, "covered": 0, "uncovered": 0,
+        "unknown": 0, "excluded": 0, "coverage_percent": None,
+    }
+    assert report["supporting_evidence"] == {
+        "report_generator_html": "coverage/index.html", "available": True,
+    }
+    assert "[Open ReportGenerator coverage HTML](coverage/index.html)" in (output / "report.md").read_text(encoding="utf-8")
+    assert 'href="coverage/index.html"' in (output / "index.html").read_text(encoding="utf-8")
+
+
+def test_analyze_reports_missing_supporting_evidence_without_fabricating_a_link(git_repo, tmp_path):
+    git_repo.commit()
+    coverage = tmp_path / "coverage.xml"
+    coverage.write_text("<coverage><packages/></coverage>", encoding="utf-8")
+    output = tmp_path / "report.json"
+    missing = tmp_path / "coverage" / "index.html"
+
+    assert cli.main([
+        "analyze", "--repo", str(git_repo.path), "--base", "HEAD", "--coverage", str(coverage),
+        "--json", str(output), "--report-generator-html", str(missing),
+    ]) == 0
+    evidence = json.loads(output.read_text(encoding="utf-8"))["supporting_evidence"]
+    assert evidence == {"report_generator_html": "coverage/index.html", "available": False}
+
+
+def test_analyze_rejects_colliding_report_destinations_before_writing(git_repo, tmp_path, capsys):
+    git_repo.commit()
+    coverage = tmp_path / "coverage.xml"
+    coverage.write_text("<coverage><packages/></coverage>", encoding="utf-8")
+    output = tmp_path / "report"
+    output.write_text("existing", encoding="utf-8")
+
+    assert cli.main([
+        "analyze", "--repo", str(git_repo.path), "--base", "HEAD", "--coverage", str(coverage),
+        "--json", str(output), "--markdown", str(output),
+    ]) == 1
+    assert capsys.readouterr().err == "tc1: error: report destinations must be distinct\n"
+    assert output.read_text(encoding="utf-8") == "existing"
 
 
 @pytest.mark.parametrize("error", [InputError, ModelValidationError])
@@ -119,15 +160,15 @@ def test_programming_errors_are_not_hidden(monkeypatch):
     with pytest.raises(RuntimeError, match="implementation defect"):
         cli.main(["analyze", "--base", "main", "--coverage", "coverage.xml"])
 
+
 def test_analyze_reports_git_input_errors(git_repo, capsys):
     git_repo.commit()
-    assert cli.main(["analyze", "--repo", str(git_repo.path), "--base", "missing",
-                     "--coverage", "unused.xml"]) == 1
+    assert cli.main([
+        "analyze", "--repo", str(git_repo.path), "--base", "missing", "--coverage", "unused.xml",
+    ]) == 1
     error = capsys.readouterr().err
     assert "Git rev-parse failed" in error
-    assert "not implemented" not in error
     assert "Traceback" not in error
-
 
 
 @pytest.mark.parametrize("data", [
@@ -149,23 +190,16 @@ def test_analyze_reports_cobertura_errors_without_touching_outputs(git_repo, tmp
     error = capsys.readouterr().err
     assert "Cobertura" in error
     assert "coverage.xml" in error
-    assert "not implemented" not in error
     assert "Traceback" not in error
     assert output.read_text(encoding="utf-8") == "existing"
 
 
-def test_analyze_reads_canonical_cobertura_entries_before_stopping(git_repo, capsys):
+def test_analyze_accepts_canonical_cobertura_entries_without_report_destinations(git_repo, capsys):
     git_repo.commit()
     coverage = Path(__file__).resolve().parents[1] / "fixtures/cobertura/coverlet_sample.xml"
     assert cli.main([
-        "analyze", "--repo", str(git_repo.path), "--base", "HEAD",
-        "--coverage", str(coverage),
-    ]) == 1
-    error = capsys.readouterr().err
-    assert "Git diff resolved 0 changed files" in error
-    assert "Cobertura parsed 12 class-level line entries" in error
-    assert "WP9" in error
-    assert "line mapper produced 0 changed-line results" in error
-    assert "branch mapper produced 0 changed-branch results" in error
-    assert "line metrics classify 0 of 0 candidates" in error
-    assert "branch metrics classify 0 of 0 candidates" in error
+        "analyze", "--repo", str(git_repo.path), "--base", "HEAD", "--coverage", str(coverage),
+    ]) == 0
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert captured.err == ""

@@ -44,10 +44,11 @@ An unmatched path, method-only evidence, or a changed line with no branch signal
 not establish a branch candidate and produces no `BranchResult`. This avoids inflating
 the branch denominator from source lines that cannot be known to contain a branch.
 
-## CLI boundary
+## Historical CLI boundary
 
-	c1 analyze now maps changed lines and reliable branch aggregates, computes WP8
-metrics, then stops with an explicit WP9 report error. It does not write reports.
+At WP7, `tc1 analyze` mapped changed lines and reliable branch aggregates, then
+stopped before metrics and report rendering. The current CLI writes WP9 reports; see
+[the report contract](21_REPORTS.md).
 
 ## Validation
 
@@ -64,6 +65,6 @@ Git result ordering.
 ## Limitations
 
 - Branch candidates are collector-evidence-based, not source-syntax-based.
-- Report rendering remains WP9; denominator semantics are defined in [WP8 metrics](20_METRICS.md).
+- Report rendering is defined in [WP9](21_REPORTS.md); denominator semantics are defined in [WP8 metrics](20_METRICS.md).
 
-Next bounded step: **WP9 reports**.
+Next bounded step: **WP10 controlled evaluation**.

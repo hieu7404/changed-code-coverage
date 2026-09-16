@@ -190,6 +190,8 @@ artifacts/tc1/index.html
 
 Bundle/link ReportGenerator coverage HTML.
 
+Exit (validated): JSON, Markdown and standalone HTML render the same stored metrics and findings from one `AnalysisResult`. The CLI writes explicitly requested, distinct destinations and can link an explicitly supplied ReportGenerator entry page without generating or guessing it. See [WP9 report contract](21_REPORTS.md).
+
 ## WP10 â€” Evaluation
 
 Build controlled cases for:

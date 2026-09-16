@@ -27,3 +27,7 @@ class DiffParseError(InputError):
 
 class CoberturaError(InputError):
     """Unreadable, malformed or unsupported Cobertura input."""
+
+
+class ReportWriteError(TC1Error):
+    """A requested TC1 report destination could not be written."""

@@ -9,8 +9,10 @@
 Git rename/copy behavior remains `--no-renames`, as confirmed by the user when
 starting WP4. WP3 was committed as `1079721`.
 
+> Current CLI behavior is documented in [WP9 reports](21_REPORTS.md). This document retains the WP4 implementation boundary and validation evidence.
+
 WP4 acquires coverage evidence. Path matching, classifications, branch mapping,
-denominators and reports remain WP5-WP9.
+denominators and reports are completed in later work packages; see [WP9 reports](21_REPORTS.md).
 
 ## API and input contract
 
@@ -127,7 +129,7 @@ No semantic true/false branch identities or covered/total aggregates are derived
 WP4. Branch interpretation belongs to WP7. Unknown and excluded items must remain
 visible outside the classifiable denominator when WP6-WP8 are implemented.
 
-## CLI behavior
+## Historical CLI behavior
 
 The existing command now performs:
 

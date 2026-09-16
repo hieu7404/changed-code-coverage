@@ -76,7 +76,7 @@ no semantic outcome identity is inferred.
 Cobertura class-level lines form the primary inventory; method lines remain separate.
 Duplicate records, source strings and raw branch metadata are preserved.
 Frozen dataclasses provide evidence and result records for one shared `AnalysisResult`.
-Report rendering remains WP9.
+WP9 renderers consume that same metrics-ready `AnalysisResult`; they do not recalculate metrics. See [WP9 reports](21_REPORTS.md).
 See [WP2 models](14_PYTHON_BOOTSTRAP.md), [Git comparison](15_GIT_DIFF_PARSER.md),
 and [WP7 branch mapping](19_BRANCH_MAPPER.md).
 

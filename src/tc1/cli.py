@@ -1,31 +1,35 @@
-"""Acquire, map and summarize changed code; reporting follows in WP9."""
+"""Acquire, map, summarize and render changed-code coverage reports."""
 
 import argparse
+import os
 import sys
 from collections.abc import Sequence
 from pathlib import Path
 
 from tc1 import __version__
 from tc1.cobertura import read_cobertura
-from tc1.errors import AnalysisNotImplementedError, TC1Error
+from tc1.errors import InputError, ReportWriteError, TC1Error
 from tc1.git_diff import read_git_diff
 from tc1.matcher import map_changed_code
 from tc1.metrics import attach_metrics
-from tc1.models import AnalysisRequest
+from tc1.models import AnalysisRequest, AnalysisResult
+from tc1.report_html import render_html
+from tc1.report_json import render_json
+from tc1.report_markdown import render_markdown
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="tc1",
-        description="Changed-Code Coverage Analyzer (WP8 metrics).",
+        description="Changed-Code Coverage Analyzer.",
         allow_abbrev=False,
     )
     parser.add_argument("--version", action="version", version=f"tc1 {__version__}")
     commands = parser.add_subparsers(dest="command", required=True)
     analyze = commands.add_parser(
         "analyze",
-        help="read Git and Cobertura inputs (reports are not yet available)",
-        description="WP8 maps changed code and computes metrics; reports are not yet available.",
+        help="analyze changed code and write requested reports",
+        description="Map changed code to Cobertura evidence and write requested reports.",
         allow_abbrev=False,
     )
     analyze.add_argument("--repo", type=Path, default=Path("."), help="Git repository (default: .)")
@@ -35,25 +39,70 @@ def build_parser() -> argparse.ArgumentParser:
     analyze.add_argument("--json", type=Path, dest="json_output", help="JSON report destination")
     analyze.add_argument("--markdown", type=Path, dest="markdown_output", help="Markdown report destination")
     analyze.add_argument("--html", type=Path, dest="html_output", help="HTML report destination")
+    analyze.add_argument(
+        "--report-generator-html", type=Path,
+        help="optional ReportGenerator HTML entry point to link as supporting evidence",
+    )
     return parser
 
 
+def _report_generator_link(output: Path, evidence: Path | None) -> tuple[str | None, bool]:
+    """Return an output-relative, portable evidence link and its availability."""
+    if evidence is None:
+        return None, False
+    resolved_output = output.resolve()
+    resolved_evidence = evidence.resolve()
+    try:
+        link = os.path.relpath(resolved_evidence, start=resolved_output.parent)
+    except ValueError:
+        # Windows cannot make a relative link between drives. Preserve the requested
+        # path rather than silently selecting a different evidence location.
+        link = str(resolved_evidence)
+    return Path(link).as_posix(), resolved_evidence.is_file()
+
+
+def _requested_reports(
+    request: AnalysisRequest, analysis: AnalysisResult,
+) -> tuple[tuple[Path, str], ...]:
+    """Render every requested artifact before writing any destination."""
+    report_specs = (
+        (request.json_output, render_json),
+        (request.markdown_output, render_markdown),
+        (request.html_output, render_html),
+    )
+    destinations = [path for path, _ in report_specs if path is not None]
+    resolved = [path.resolve() for path in destinations]
+    if len(set(resolved)) != len(resolved):
+        raise InputError("report destinations must be distinct")
+
+    reports = []
+    for path, renderer in report_specs:
+        if path is None:
+            continue
+        evidence_link, evidence_available = _report_generator_link(path, request.report_generator_html)
+        reports.append((path, renderer(
+            analysis,
+            report_generator_html=evidence_link,
+            report_generator_available=evidence_available,
+        )))
+    return tuple(reports)
+
+
+def _write_reports(reports: tuple[tuple[Path, str], ...]) -> None:
+    for destination, content in reports:
+        try:
+            destination.parent.mkdir(parents=True, exist_ok=True)
+            destination.write_text(content, encoding="utf-8")
+        except OSError as exc:
+            raise ReportWriteError(f"cannot write report {destination}: {exc.strerror or exc}") from exc
+
+
 def analyze(request: AnalysisRequest) -> None:
-    """Read, map and summarize changed code, then stop before WP9 reports."""
+    """Read, map, summarize and write every report explicitly requested."""
     changes = read_git_diff(request.repo, request.base, request.head)
     coverage = read_cobertura(request.coverage)
     analysis = attach_metrics(map_changed_code(changes, coverage))
-    raise AnalysisNotImplementedError(
-        "reports are not implemented yet (WP9); "
-        f"Git diff resolved {len(changes.files)} changed files; "
-        f"Cobertura parsed {len(coverage.line_entries)} class-level line entries; "
-        f"line mapper produced {len(analysis.lines)} changed-line results; "
-        f"branch mapper produced {len(analysis.branches)} changed-branch results; "
-        f"line metrics classify {analysis.metrics.lines.classifiable} of "
-        f"{analysis.metrics.lines.candidates} candidates; "
-        f"branch metrics classify {analysis.metrics.branches.classifiable} of "
-        f"{analysis.metrics.branches.candidates} candidates."
-    )
+    _write_reports(_requested_reports(request, analysis))
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -66,6 +115,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         json_output=args.json_output,
         markdown_output=args.markdown_output,
         html_output=args.html_output,
+        report_generator_html=args.report_generator_html,
     )
     try:
         analyze(request)

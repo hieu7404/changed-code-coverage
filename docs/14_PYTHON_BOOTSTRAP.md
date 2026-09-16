@@ -4,7 +4,7 @@
 
 This document records the WP2 baseline. Git acquisition and Cobertura parsing now
 exist; see [Git comparison](15_GIT_DIFF_PARSER.md) and
-[current coverage and CLI behavior](16_COBERTURA_PARSER.md).
+[the current report/CLI contract](21_REPORTS.md).
 
 **WP2 complete.** Validated on Windows with Python 3.14.6 and pytest 9.1.1:
 43 tests passed. TC1 0.1.0 installs in a repository-local virtual environment.
@@ -49,7 +49,7 @@ scratch directory on subsequent runs; keep durable run evidence outside it. JUni
 results use the explicit path above. Fixtures remain small reviewed assets under
 `fixtures/`; diff/XML fixtures will be added with their parsers.
 
-## CLI contract
+## WP2 CLI contract (historical baseline)
 
 Both entry points call the same `main` function.
 

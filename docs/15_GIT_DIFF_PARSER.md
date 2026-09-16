@@ -3,7 +3,7 @@
 ## Status
 
 This document records WP3 behavior. WP4 now also reads Cobertura;
-see [current input and CLI behavior](16_COBERTURA_PARSER.md).
+see [the current report/CLI contract](21_REPORTS.md).
 
 **WP3 complete.** Validated on Windows with Python 3.14.6, Git 2.55.0 and
 pytest 9.1.1. The full Python suite has 104 passing cases.

@@ -79,11 +79,14 @@ See [Cobertura evidence and limitations](16_COBERTURA_PARSER.md).
 - [x] Null coverage case
 
 ## WP9
-- [ ] JSON
-- [ ] Markdown
-- [ ] HTML
-- [ ] ReportGenerator bundle/link
-- [ ] Same metrics across outputs
+
+Validated: JSON, Markdown and standalone HTML consume the same metrics-ready `AnalysisResult`; CLI output and explicit ReportGenerator linking are covered by tests. See [report contract](21_REPORTS.md).
+
+- [x] JSON
+- [x] Markdown
+- [x] HTML
+- [x] ReportGenerator bundle/link
+- [x] Same metrics across outputs
 
 ## WP10
 - [ ] Controlled scenarios

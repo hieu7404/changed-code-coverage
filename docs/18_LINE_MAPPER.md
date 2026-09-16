@@ -35,7 +35,7 @@ Method-level Cobertura records are never substituted for missing class-level evi
 Repeated records are not deduplicated, even when their hit counts agree. This preserves
 the rule that missing or unreliable evidence is not uncovered.
 
-## CLI boundary
+## Historical CLI boundary
 
 `tc1 analyze` now resolves Git, parses Cobertura and maps changed lines before it stops
 with an explicit WP7-WP9 error. The message includes raw input counts and the number of

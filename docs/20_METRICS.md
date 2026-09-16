@@ -3,8 +3,7 @@
 ## Status
 
 **WP8 complete.** TC1 derives deterministic line and branch summaries from mapped
-evidence and attaches them to the shared immutable `AnalysisResult`. The CLI computes
-these metrics before stopping at the still-unimplemented WP9 reporting boundary.
+evidence and attaches them to the shared immutable `AnalysisResult`. WP9 renderers consume these metrics directly; they do not recompute them.
 
 ## API
 
@@ -29,8 +28,7 @@ coverage_percent
 ```
 
 `coverage_percent` is derived, never supplied independently. It is a percentage in
-the range 0 to 100, or `None` when there is no classifiable evidence. Renderers in
-WP9 must format this stored value; they must not recompute it.
+the range 0 to 100, or `None` when there is no classifiable evidence. Renderers in [WP9](21_REPORTS.md) format this stored value; they do not recompute it.
 
 ## Denominator contract
 
@@ -71,7 +69,7 @@ preserving unreliable branch evidence without treating it as uncovered.
 
 `tests/test_metrics.py` checks line denominator accounting, branch aggregate outcome
 accounting, unknown/exclusion visibility, null coverage, immutability, and invalid
-summary-count rejection. CLI tests confirm metrics run before the WP9 stop boundary.
+summary-count rejection. CLI and renderer tests confirm the same stored metrics reach every output.
 
 ```powershell
 .venv/Scripts/python.exe -m pytest tests/test_metrics.py -q
@@ -81,9 +79,9 @@ git diff --check
 
 ## Limitations
 
-- WP8 does not write JSON, Markdown, or HTML; that is WP9.
+- WP8 owns calculation; [WP9 renderers](21_REPORTS.md) consume its stored values.
 - Branch unknown counts represent unknown findings, not fabricated counts of source
   outcomes.
 - No coverage threshold or CI gate is introduced.
 
-Next bounded step: **WP9 reports**.
+Next bounded step: **WP10 controlled evaluation**.

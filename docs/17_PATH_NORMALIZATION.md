@@ -35,7 +35,7 @@ matches = match_coverage_paths(coverage_report, changed_git_paths, repo_root)
 multiple Git paths, or multiple class records name one Git path. Only `matched` is
 usable by WP6; all other statuses must become `unknown`, never `uncovered`.
 
-## CLI boundary
+## Historical CLI boundary
 
 `tc1 analyze` now resolves Git revisions, parses Cobertura and runs the path-only
 resolver before its explicit WP6-WP9 not-implemented error. It writes no report.

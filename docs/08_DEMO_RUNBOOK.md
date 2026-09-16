@@ -49,11 +49,10 @@ artifacts/tc1/coverage/
 
 ### 5. Run TC1
 
-WP4 resolves base/head, reads changed head-line candidates and parses Cobertura.
-When both inputs succeed, `analyze` exits 1 with an explicit message that mapping
-and reports remain unimplemented; it writes no reports. The end-to-end demo becomes
-available after WP5-WP9. See [Python installation](14_PYTHON_BOOTSTRAP.md) and
-[the current coverage/CLI contract](16_COBERTURA_PARSER.md).
+TC1 resolves the selected Git comparison, maps changed line and reliable aggregate
+branch evidence, then writes every explicitly requested report. Pass the existing
+ReportGenerator entry page explicitly so it becomes supporting evidence; TC1 neither
+generates nor guesses that page. See [the WP9 report contract](21_REPORTS.md).
 
 Target analysis invocation:
 
@@ -65,10 +64,11 @@ tc1 analyze \
   --coverage artifacts/tc1/coverage.cobertura.xml \
   --json artifacts/tc1/report.json \
   --markdown artifacts/tc1/report.md \
-  --html artifacts/tc1/index.html
+  --html artifacts/tc1/index.html \
+  --report-generator-html artifacts/tc1/coverage/index.html
 ```
 
-Update this runbook if final CLI differs.
+The command above is the current CLI contract.
 
 ## Expected result
 
