@@ -178,8 +178,7 @@ directory, and then stops before WP5-WP9. Input bytes and report destinations ar
 Validated with 166 passing Python tests and the actual WP1 export.
 See [WP4 evidence contract and limitations](16_COBERTURA_PARSER.md).
 
-## Pending decisions
-## D018 ??? Lexical one-to-one path resolution
+## D018 - Lexical one-to-one path resolution
 **Accepted**
 
 WP5 resolves Cobertura source roots and class filenames against the Git repository
@@ -192,8 +191,25 @@ Missing candidates and any many-to-one or one-to-many relation stay explicit, so
 must classify them as `unknown`. Windows-syntax evidence is case-insensitive; POSIX
 syntax remains case-sensitive, independently of the host OS.
 
+See [WP5 path normalization](17_PATH_NORMALIZATION.md).
+
+## D019 - Explicit line-evidence classification
+**Accepted**
+
+WP6 maps only changed head lines. A line is covered or uncovered only when one
+one-to-one path match yields one explicit class-level record with respectively
+positive or zero hits. Missing, unavailable and ambiguous evidence remain `unknown`
+with stable reasons; method-level evidence never fills a missing class-level record.
+
+It preserves Git file/hunk/line order in `AnalysisResult` and leaves branch mapping,
+exclusions, denominators and rendering for later work packages.
+
+See [WP6 line mapping](18_LINE_MAPPER.md).
+
+## Pending decisions
 
 Fill during implementation:
+
 
 ```text
 Final CLI shape:

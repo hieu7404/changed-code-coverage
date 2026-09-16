@@ -129,6 +129,13 @@ mapped + hits = 0 → uncovered
 missing/ambiguous → unknown
 ```
 
+Exit (validated): each changed head line becomes `covered` only from one explicit
+positive-hit class-level entry, and `uncovered` only from one explicit zero-hit entry.
+Missing path/line evidence, unavailable files and duplicate evidence remain `unknown`
+with visible reasons. Method evidence is never used as a class-line fallback.
+
+See [WP6 implementation and validation](18_LINE_MAPPER.md).
+
 ## WP7 — Branch mapper
 
 Map changed branch evidence only when reliable.

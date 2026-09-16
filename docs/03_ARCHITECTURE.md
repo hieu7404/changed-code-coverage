@@ -63,20 +63,21 @@ src/tc1/
 └── errors.py
 ```
 
-### WP5 implementation boundary
+### WP6 implementation boundary
 
 The package implements CLI/package entry points, models, errors, Git acquisition
 (`git_diff.py`), pure raw/patch parsing (`diff_parser.py`), Cobertura parsing
-(`cobertura.py`), and lexical path resolution (`path_normalizer.py`). Git produces
-`GitDiffResult`; XML produces `CoverageReport`; matching produces `PathMatch` records.
-Only one-to-one path matches are accepted; unmatched and ambiguous paths stay explicit.
+(`cobertura.py`), lexical path resolution (`path_normalizer.py`), and line mapping
+(`matcher.py`). Git produces `GitDiffResult`; XML produces `CoverageReport`; mapping
+produces one `LineResult` per changed head line in `AnalysisResult`. Only one-to-one
+path matches and one explicit class-level line record can classify a line.
 
 Cobertura class-level lines form the primary inventory; method lines remain separate.
 Duplicate records, source strings and raw branch metadata are preserved.
 Frozen dataclasses provide evidence and result records for one shared `AnalysisResult`.
-Line/branch mapping, metrics and reports remain WP6-WP9.
+Branch mapping, metrics and reports remain WP7-WP9.
 See [WP2 models](14_PYTHON_BOOTSTRAP.md), [Git comparison](15_GIT_DIFF_PARSER.md),
-and [Cobertura evidence and CLI contract](16_COBERTURA_PARSER.md).
+and [WP6 line mapping](18_LINE_MAPPER.md).
 
 ## Classification rules
 

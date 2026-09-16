@@ -60,11 +60,11 @@ See [Cobertura evidence and limitations](16_COBERTURA_PARSER.md).
 - [x] Detect ambiguity
 
 ## WP6
-- [ ] Covered line
-- [ ] Uncovered line
-- [ ] Unknown line
-- [ ] Reasons
-- [ ] Tests
+- [x] Covered line
+- [x] Uncovered line
+- [x] Unknown line
+- [x] Reasons
+- [x] Tests
 
 ## WP7
 - [ ] Branch representation

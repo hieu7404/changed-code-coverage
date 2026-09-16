@@ -92,13 +92,14 @@ Branches
 
 ## Current implementation
 
-WP0-WP5 are complete: the C# sample has a validated coverage baseline, and the Python
-tool reads Git changes and Cobertura evidence, then resolves paths without guessing file
-identity. Line/branch mapping, metrics and reports remain WP6-WP9.
+WP0-WP6 are complete: the C# sample has a validated coverage baseline, and the Python
+tool reads Git changes and Cobertura evidence, resolves paths without guessing file
+identity, and classifies changed lines. Branch mapping, metrics and reports remain WP7-WP9.
 See [Python setup](docs/14_PYTHON_BOOTSTRAP.md),
 [Git diff](docs/15_GIT_DIFF_PARSER.md), and
 [Cobertura and current CLI behavior](docs/16_COBERTURA_PARSER.md), and
-[path normalization](docs/17_PATH_NORMALIZATION.md).
+[path normalization](docs/17_PATH_NORMALIZATION.md), and
+[line mapping](docs/18_LINE_MAPPER.md).
 
 ## Important scope rule
 
