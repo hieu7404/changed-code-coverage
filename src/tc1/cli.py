@@ -1,4 +1,4 @@
-"""Acquire Git and Cobertura inputs; mapping and reports follow in WP5-WP9."""
+"""Acquire and path-normalize inputs; mapping and reports follow in WP6-WP9."""
 
 import argparse
 import sys
@@ -10,12 +10,13 @@ from tc1.cobertura import read_cobertura
 from tc1.errors import AnalysisNotImplementedError, TC1Error
 from tc1.models import AnalysisRequest
 from tc1.git_diff import read_git_diff
+from tc1.path_normalizer import match_coverage_paths
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="tc1",
-        description="Changed-Code Coverage Analyzer (WP4 Cobertura input).",
+        description="Changed-Code Coverage Analyzer (WP5 path normalization).",
         allow_abbrev=False,
     )
     parser.add_argument("--version", action="version", version=f"tc1 {__version__}")
@@ -23,7 +24,7 @@ def build_parser() -> argparse.ArgumentParser:
     analyze = commands.add_parser(
         "analyze",
         help="read Git and Cobertura inputs (mapping not implemented yet)",
-        description="WP4 reads Git and Cobertura; mapping and reports are not yet available.",
+        description="WP5 reads and path-normalizes Git and Cobertura; line/branch mapping and reports are not yet available.",
         allow_abbrev=False,
     )
     analyze.add_argument("--repo", type=Path, default=Path("."), help="Git repository (default: .)")
@@ -37,11 +38,11 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def analyze(request: AnalysisRequest) -> None:
-    """Read both inputs, then explicitly stop before unavailable mapping stages."""
+    """Read and path-normalize inputs, then stop before unavailable mapping stages."""
     changes = read_git_diff(request.repo, request.base, request.head)
     coverage = read_cobertura(request.coverage)
-    raise AnalysisNotImplementedError(
-        "mapping and reports are not implemented yet (WP5-WP9); "
+    match_coverage_paths(coverage, (item.path for item in changes.files), changes.repo_root)
+    raise AnalysisNotImplementedError(        "mapping and reports are not implemented yet (WP6-WP9); "
         f"Git diff resolved {len(changes.files)} changed files; "
         f"Cobertura parsed {len(coverage.line_entries)} class-level line entries."
     )

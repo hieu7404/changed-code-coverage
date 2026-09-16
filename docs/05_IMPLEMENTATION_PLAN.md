@@ -110,6 +110,15 @@ Normalize:
 
 Reject ambiguous matches.
 
+
+Exit (validated): Git names and Cobertura source-root/class-filename evidence are
+resolved lexically and independently of the host OS. Windows-syntax evidence is
+case-insensitive while POSIX evidence remains case-sensitive. One class that names
+multiple changed Git paths, or multiple classes that name one Git path, is explicitly
+`ambiguous`; unmatched paths remain `unmatched`. No basename fallback is used.
+
+See [WP5 implementation and validation](17_PATH_NORMALIZATION.md).
+
 ## WP6 — Line mapper
 
 For each changed line:

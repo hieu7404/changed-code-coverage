@@ -179,6 +179,19 @@ Validated with 166 passing Python tests and the actual WP1 export.
 See [WP4 evidence contract and limitations](16_COBERTURA_PARSER.md).
 
 ## Pending decisions
+## D018 ??? Lexical one-to-one path resolution
+**Accepted**
+
+WP5 resolves Cobertura source roots and class filenames against the Git repository
+root without opening files, following symlinks, or using a basename fallback. It
+normalizes separators and lexical `.` / `..`; paths that escape their root or cannot
+be resolved safely supply no mapping candidate.
+
+Only a one-to-one match between one class record and one changed Git path is usable.
+Missing candidates and any many-to-one or one-to-many relation stay explicit, so WP6
+must classify them as `unknown`. Windows-syntax evidence is case-insensitive; POSIX
+syntax remains case-sensitive, independently of the host OS.
+
 
 Fill during implementation:
 

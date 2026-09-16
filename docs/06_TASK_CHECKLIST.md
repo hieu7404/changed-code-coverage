@@ -54,10 +54,10 @@ See [Cobertura evidence and limitations](16_COBERTURA_PARSER.md).
 - [x] Handle malformed input
 
 ## WP5
-- [ ] Normalize Windows paths
-- [ ] Normalize Linux paths
-- [ ] Normalize repo-relative paths
-- [ ] Detect ambiguity
+- [x] Normalize Windows paths
+- [x] Normalize Linux paths
+- [x] Normalize repo-relative paths
+- [x] Detect ambiguity
 
 ## WP6
 - [ ] Covered line

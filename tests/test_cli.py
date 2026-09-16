@@ -164,4 +164,4 @@ def test_analyze_reads_canonical_cobertura_entries_before_stopping(git_repo, cap
     error = capsys.readouterr().err
     assert "Git diff resolved 0 changed files" in error
     assert "Cobertura parsed 12 class-level line entries" in error
-    assert "WP5-WP9" in error
+    assert "WP6-WP9" in error
