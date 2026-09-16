@@ -84,4 +84,4 @@ git diff --check
   outcomes.
 - No coverage threshold or CI gate is introduced.
 
-Next bounded step: **WP10 controlled evaluation**.
+Next bounded step: **WP11 real-pilot readiness**.

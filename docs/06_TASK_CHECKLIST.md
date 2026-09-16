@@ -89,12 +89,14 @@ Validated: JSON, Markdown and standalone HTML consume the same metrics-ready `An
 - [x] Same metrics across outputs
 
 ## WP10
-- [ ] Controlled scenarios
-- [ ] Expected manifests
-- [ ] Eval runner
-- [ ] Mapping accuracy report
-- [ ] Reviewer-time pilot
 
+Validated: 13 controlled scenarios pass through the production mapping/metrics pipeline with 16/16 line and 3/3 branch findings correct. See [evaluation evidence and limits](22_EVALUATION.md).
+
+- [x] Controlled scenarios
+- [x] Expected manifests
+- [x] Eval runner
+- [x] Mapping accuracy report
+- [ ] Reviewer-time pilot (requires voluntary human participants)
 ## WP11
 - [ ] Real pilot when available
 

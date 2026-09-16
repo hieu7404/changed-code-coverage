@@ -256,3 +256,9 @@ Threshold policy:
 **Accepted**
 
 WP9 accepts optional explicit JSON, Markdown and HTML destinations. It renders each requested artifact from one metrics-ready `AnalysisResult` and rejects colliding destinations. ReportGenerator remains a separate supporting visualization: the caller provides its HTML entry page through `--report-generator-html`; TC1 makes an output-relative link when possible and reports its availability without generating, copying or guessing coverage HTML. See [WP9 reports](21_REPORTS.md).
+
+
+## D023 - Manifest-driven controlled evaluation
+**Accepted**
+
+WP10 keeps one reviewed Cobertura fixture, Git-like change manifests and expected public finding/metric outputs under version control. The evaluator invokes the production parser, mapper and metrics code; it compares complete public outputs rather than recreating classification rules. Generated run output belongs under `artifacts/eval/<run-id>/`. Controlled mapping accuracy and the separate human reviewer-time question must not be conflated. See [WP10 evaluation](22_EVALUATION.md).

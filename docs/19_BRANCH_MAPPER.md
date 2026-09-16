@@ -67,4 +67,4 @@ Git result ordering.
 - Branch candidates are collector-evidence-based, not source-syntax-based.
 - Report rendering is defined in [WP9](21_REPORTS.md); denominator semantics are defined in [WP8 metrics](20_METRICS.md).
 
-Next bounded step: **WP10 controlled evaluation**.
+Next bounded step: **WP11 real-pilot readiness**.

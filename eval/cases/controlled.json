@@ -1,0 +1,20 @@
+{
+  "schema_version": "1.0",
+  "coverage": "../../fixtures/evaluation/controlled.xml",
+  "expected": "../expected/controlled.json",
+  "cases": [
+    {"id": "E01", "description": "fully covered changed line", "files": [{"path": "src/Covered.cs", "hunks": [{"added_lines": [10]}]}]},
+    {"id": "E02", "description": "partial changed-line coverage", "files": [{"path": "src/Partial.cs", "hunks": [{"added_lines": [10, 11]}]}]},
+    {"id": "E03", "description": "fully uncovered changed line; mirrors the manual sample run", "files": [{"path": "src/Uncovered.cs", "hunks": [{"added_lines": [10]}]}]},
+    {"id": "E04", "description": "missing primary line instrumentation", "files": [{"path": "src/MissingLine.cs", "hunks": [{"added_lines": [10]}]}]},
+    {"id": "E05", "description": "multiple changed files", "files": [{"path": "src/First.cs", "hunks": [{"added_lines": [3]}]}, {"path": "src/Second.cs", "hunks": [{"added_lines": [8]}]}]},
+    {"id": "E06", "description": "multiple changed hunks in one file", "files": [{"path": "src/Hunks.cs", "hunks": [{"added_lines": [3]}, {"added_lines": [9]}]}]},
+    {"id": "E07", "description": "new file with explicit coverage", "files": [{"path": "src/New.cs", "kind": "added", "hunks": [{"added_lines": [1]}]}]},
+    {"id": "E08", "description": "deleted file has no changed head-line candidate", "files": [{"path": "src/Deleted.cs", "kind": "deleted", "hunks": []}]},
+    {"id": "E09", "description": "Windows-style Cobertura path normalizes to one Git path", "files": [{"path": "src/Case.cs", "hunks": [{"added_lines": [4]}]}]},
+    {"id": "E10", "description": "fully covered reliable branch aggregate", "files": [{"path": "src/FullBranch.cs", "hunks": [{"added_lines": [5]}]}]},
+    {"id": "E11", "description": "partially covered reliable branch aggregate", "files": [{"path": "src/PartialBranch.cs", "hunks": [{"added_lines": [5]}]}]},
+    {"id": "E12", "description": "branch metadata without aggregate remains unknown", "files": [{"path": "src/AmbiguousBranch.cs", "hunks": [{"added_lines": [5]}]}]},
+    {"id": "E13", "description": "no classifiable changed code from ambiguous and unmatched paths", "files": [{"path": "src/Ambiguous.cs", "hunks": [{"added_lines": [5]}]}, {"path": "src/PathMismatch.cs", "hunks": [{"added_lines": [5]}]}]}
+  ]
+}

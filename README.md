@@ -94,14 +94,14 @@ Branches
 
 WP0-WP8 are complete: the C# sample has a validated coverage baseline, and the Python
 tool reads Git changes and Cobertura evidence, resolves paths without guessing file
-identity, maps changed lines and reliable branch aggregates, and derives one shared line/branch metric summary. Unknown and excluded findings remain visible outside the coverage denominator; a zero denominator is `null`. WP9 renders JSON, Markdown and standalone HTML from that same metrics-ready result, with an explicit optional link to ReportGenerator supporting evidence.
+identity, maps changed lines and reliable branch aggregates, and derives one shared line/branch metric summary. Unknown and excluded findings remain visible outside the coverage denominator; a zero denominator is `null`. WP9 renders JSON, Markdown and standalone HTML from that same metrics-ready result, with an explicit optional link to ReportGenerator supporting evidence. WP10 adds a committed controlled evaluation suite: all 13 cases currently match their reviewed expectations.
 See [Python setup](docs/14_PYTHON_BOOTSTRAP.md),
 [Git diff](docs/15_GIT_DIFF_PARSER.md), and
 [Cobertura parsing](docs/16_COBERTURA_PARSER.md), and
 [path normalization](docs/17_PATH_NORMALIZATION.md), and
 [line mapping](docs/18_LINE_MAPPER.md), and
 [branch mapping](docs/19_BRANCH_MAPPER.md), and
-[metrics](docs/20_METRICS.md), and [reports](docs/21_REPORTS.md).
+[metrics](docs/20_METRICS.md), [reports](docs/21_REPORTS.md), and [controlled evaluation](docs/22_EVALUATION.md).
 
 ## Important scope rule
 

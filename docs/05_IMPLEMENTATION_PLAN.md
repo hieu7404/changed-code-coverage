@@ -211,6 +211,8 @@ Commit reviewed cases and expected results under `fixtures/` and `eval/`.
 Write generated evaluation results to `artifacts/eval/<run-id>/` and durable findings
 to `docs/`, following the [output policy](03_ARCHITECTURE.md#generated-output-policy).
 
+Exit (controlled evaluation validated): 13 reviewed scenarios exercise the production mapper and metrics against committed expected public findings. The first run records 16/16 correct changed-line findings and 3/3 correct branch findings; reviewer-time research remains a separate human-participant activity. See [WP10 evaluation](22_EVALUATION.md).
+
 ## WP11 â€” Real-pilot readiness
 
 When a real repository becomes available:

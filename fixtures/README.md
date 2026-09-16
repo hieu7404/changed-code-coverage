@@ -34,3 +34,8 @@ See [WP4 validation](../docs/16_COBERTURA_PARSER.md).
 All generated run output goes under the repository-root `artifacts/`, regardless of size.
 Only small inputs and expected results deliberately reviewed as deterministic fixtures
 belong here. See [Generated output policy](../docs/03_ARCHITECTURE.md#generated-output-policy).
+
+
+## WP10 evaluation fixture
+
+`evaluation/controlled.xml` is one small, reviewed Cobertura inventory for the 13 WP10 controlled scenarios. The scenario change inventories and expected public findings live in `eval/`; generated results remain under `artifacts/eval/`. See [WP10 evaluation](../docs/22_EVALUATION.md).

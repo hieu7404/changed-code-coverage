@@ -65,10 +65,10 @@
 - [ ] unit tests.
 - [ ] integration test.
 - [ ] deterministic fixtures.
-- [ ] controlled evaluation.
+- [x] controlled evaluation (13 reviewed cases; see [WP10 evaluation](22_EVALUATION.md)).
 - [ ] known limitations documented.
 
 ### Research
-- [ ] mapping accuracy reported.
+- [x] mapping accuracy reported (controlled fixtures only).
 - [ ] reviewer-time pilot documented.
 - [ ] no unsupported broad claims.

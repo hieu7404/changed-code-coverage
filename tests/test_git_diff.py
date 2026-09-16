@@ -1,6 +1,8 @@
 """Exercise real Git revisions and paths using repositories under artifacts/."""
 
 import subprocess
+import tempfile
+from pathlib import Path
 
 import pytest
 
@@ -178,12 +180,15 @@ def test_blob_revision_is_not_accepted_as_commit(git_repo):
 
 
 @pytest.mark.parametrize("directory_exists", [False, True])
-def test_invalid_repository_is_an_input_error(tmp_path, directory_exists):
-    repo = tmp_path / "not-a-repo"
-    if directory_exists:
-        repo.mkdir()
-    with pytest.raises(GitDiffError):
-        git_diff.read_git_diff(repo, "HEAD")
+def test_invalid_repository_is_an_input_error(directory_exists):
+    # pytest scratch is intentionally inside this repository's artifacts directory.
+    # Use an OS-temp directory so Git cannot discover this repository as its parent.
+    with tempfile.TemporaryDirectory() as temporary_directory:
+        repo = Path(temporary_directory) / "not-a-repo"
+        if directory_exists:
+            repo.mkdir()
+        with pytest.raises(GitDiffError):
+            git_diff.read_git_diff(repo, "HEAD")
 
 
 def test_unrelated_histories_fail(git_repo):
