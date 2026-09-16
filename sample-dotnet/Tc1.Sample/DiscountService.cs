@@ -13,7 +13,7 @@ public sealed class DiscountService
         if (subtotal >= 1000m)
         {
             // Intentionally not exercised by WP0 tests; verify with coverage in WP1.
-            return subtotal * 0.80m;
+            return subtotal * 0.75m;
         }
 
         if (subtotal >= 100m)
