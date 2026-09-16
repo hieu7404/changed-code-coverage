@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "pilot_id": "replace-with-local-identifier",
+  "repository": {
+    "location": "do-not-commit-an-absolute-path-or-internal-url",
+    "base": "replace-with-reviewed-base-commit",
+    "head": "replace-with-reviewed-head-commit"
+  },
+  "coverage": {
+    "collector": "replace-with-existing-or-approved-collector",
+    "cobertura_location": "local-artifact-location-not-committed",
+    "report_generator_location": "local-artifact-location-not-committed"
+  },
+  "sampling": [
+    {
+      "diff_id": "D01",
+      "paths_reviewed": [],
+      "finding_observations": [
+        {
+          "path": "repository-relative-path-only",
+          "line": 0,
+          "expected_status": "covered|uncovered|unknown",
+          "actual_status": "covered|uncovered|unknown",
+          "outcome": "match|mapping_discrepancy|coverage_provenance_issue|collector_path_limitation",
+          "note": "avoid source content, customer data and credentials"
+        }
+      ]
+    }
+  ],
+  "summary": {
+    "sampled_diffs": 0,
+    "observations": 0,
+    "matches": 0,
+    "mapping_discrepancies": 0,
+    "unknown_findings": 0,
+    "limitations": []
+  }
+}

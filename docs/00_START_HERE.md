@@ -64,7 +64,7 @@ WP7  branch mapper
 WP8  metrics
 WP9  reports
 WP10 evaluation
-WP11 real-pilot readiness (when access is available)
+WP11 [real-pilot readiness](23_REAL_PILOT_READINESS.md) (execution when access is available)
 WP12 optional report-only CI
 WP13 optional CI gate (post-MVP, explicit approval required)
 ```

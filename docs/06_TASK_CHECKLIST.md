@@ -97,8 +97,13 @@ Validated: 13 controlled scenarios pass through the production mapping/metrics p
 - [x] Eval runner
 - [x] Mapping accuracy report
 - [ ] Reviewer-time pilot (requires voluntary human participants)
+
 ## WP11
-- [ ] Real pilot when available
+
+Readiness is documented for an authorized local C# project; no external pilot repository is in scope yet. See [real-pilot readiness](23_REAL_PILOT_READINESS.md).
+
+- [x] Real-pilot readiness runbook and manifest template
+- [ ] Real pilot execution when an authorized repository is available
 
 ## WP12
 - [ ] Controlled fixtures pass and sampled diff mappings are manually validated

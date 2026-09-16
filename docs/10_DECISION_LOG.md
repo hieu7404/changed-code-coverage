@@ -262,3 +262,9 @@ WP9 accepts optional explicit JSON, Markdown and HTML destinations. It renders e
 **Accepted**
 
 WP10 keeps one reviewed Cobertura fixture, Git-like change manifests and expected public finding/metric outputs under version control. The evaluator invokes the production parser, mapper and metrics code; it compares complete public outputs rather than recreating classification rules. Generated run output belongs under `artifacts/eval/<run-id>/`. Controlled mapping accuracy and the separate human reviewer-time question must not be conflated. See [WP10 evaluation](22_EVALUATION.md).
+
+
+## D024 - Real-pilot readiness before external integration
+**Accepted**
+
+WP11 readiness is documented without accessing or assuming an external repository. A real pilot must be one authorized local C# repository with its existing tests, a reviewed committed diff, valid Cobertura class-level evidence and manual finding observations. Pilot paths, source content, credentials and internal URLs remain outside this repository; generated material stays in approved local artifacts. No CI gate follows from readiness alone. See [real-pilot readiness](23_REAL_PILOT_READINESS.md).

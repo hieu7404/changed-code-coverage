@@ -101,7 +101,7 @@ See [Python setup](docs/14_PYTHON_BOOTSTRAP.md),
 [path normalization](docs/17_PATH_NORMALIZATION.md), and
 [line mapping](docs/18_LINE_MAPPER.md), and
 [branch mapping](docs/19_BRANCH_MAPPER.md), and
-[metrics](docs/20_METRICS.md), [reports](docs/21_REPORTS.md), and [controlled evaluation](docs/22_EVALUATION.md).
+[metrics](docs/20_METRICS.md), [reports](docs/21_REPORTS.md), [controlled evaluation](docs/22_EVALUATION.md), and [real-pilot readiness](docs/23_REAL_PILOT_READINESS.md).
 
 ## Important scope rule
 

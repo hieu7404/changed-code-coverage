@@ -82,5 +82,5 @@ suite's 100% result as evidence of reviewer productivity or real-repository accu
   arbitrary external repository.
 - No human reviewer-time pilot or real-pilot sample has been run yet.
 
-Next bounded step: **WP11 real-pilot readiness**, once a suitable local C# repository
-is available. The reviewer-time pilot may run later without changing the mapper.
+Next bounded step: **WP11 real-pilot execution**, once a suitable local C# repository
+is available; [readiness is documented](23_REAL_PILOT_READINESS.md). The reviewer-time pilot may run later without changing the mapper.

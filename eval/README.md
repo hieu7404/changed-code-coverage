@@ -9,6 +9,7 @@ eval/
 ├── cases/controlled.json       # controlled Git-like change inventories
 ├── expected/controlled.json    # reviewed public findings and metrics
 ├── reviewer_pilot.md           # manual protocol; not automated or completed
+├── real_pilot_manifest.template.json # private local-pilot observation template
 └── run_eval.py                 # runner
 ```
 

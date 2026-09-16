@@ -225,6 +225,8 @@ When a real repository becomes available:
 
 Do not change core architecture just because the pilot changes.
 
+Readiness is complete through the [WP11 runbook](23_REAL_PILOT_READINESS.md): it provides collector-selection, artifact, manual-sampling and privacy boundaries without claiming an external pilot was run. Execution remains pending an authorized local C# repository.
+
 ## WP12 â€” Optional report-only CI
 
 Only after controlled fixtures pass and sampled diff mappings have been manually validated.
