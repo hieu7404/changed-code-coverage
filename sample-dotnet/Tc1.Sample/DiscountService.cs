@@ -18,7 +18,7 @@ public sealed class DiscountService
 
         if (subtotal >= 100m)
         {
-            return subtotal * 0.90m;
+            return subtotal * 0.82m;
         }
 
         return subtotal;
