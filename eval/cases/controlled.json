@@ -15,6 +15,7 @@
     {"id": "E10", "description": "fully covered reliable branch aggregate", "files": [{"path": "src/FullBranch.cs", "hunks": [{"added_lines": [5]}]}]},
     {"id": "E11", "description": "partially covered reliable branch aggregate", "files": [{"path": "src/PartialBranch.cs", "hunks": [{"added_lines": [5]}]}]},
     {"id": "E12", "description": "branch metadata without aggregate remains unknown", "files": [{"path": "src/AmbiguousBranch.cs", "hunks": [{"added_lines": [5]}]}]},
-    {"id": "E13", "description": "no classifiable changed code from ambiguous and unmatched paths", "files": [{"path": "src/Ambiguous.cs", "hunks": [{"added_lines": [5]}]}, {"path": "src/PathMismatch.cs", "hunks": [{"added_lines": [5]}]}]}
+    {"id": "E13", "description": "no classifiable changed code from ambiguous same-line evidence and an unmatched path", "files": [{"path": "src/Ambiguous.cs", "hunks": [{"added_lines": [5]}]}, {"path": "src/PathMismatch.cs", "hunks": [{"added_lines": [5]}]}]},
+    {"id": "E14", "description": "multiple classes for one source file resolve unique evidence per changed line", "files": [{"path": "src/MultiClass.cs", "hunks": [{"added_lines": [6, 10]}]}]}
   ]
 }

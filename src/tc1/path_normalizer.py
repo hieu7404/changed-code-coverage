@@ -7,9 +7,10 @@ root; it never opens source files, uses basename matching, or relies on the host
 operating system's path rules.
 
 A class record is accepted only when its possible Cobertura paths identify exactly
-one changed Git path, and exactly one class record identifies that Git path. The
-mapper can therefore turn every other outcome into ``unknown`` rather than choosing
-an arbitrary file.
+one changed Git path. Multiple class records may identify the same source file because
+C# compilers and coverage collectors can emit supporting state-machine classes for
+async/iterator code. Line and branch mappers resolve those records at the changed-line
+level instead of choosing an arbitrary class.
 """
 
 from collections import defaultdict
@@ -23,7 +24,7 @@ from tc1.models import CoverageClass, CoverageReport
 
 
 class PathMatchStatus(StrEnum):
-    """Whether a changed Git path has one reliable Cobertura class match."""
+    """Whether a changed Git path has reliable Cobertura class path matches."""
 
     MATCHED = "matched"
     UNMATCHED = "unmatched"
@@ -179,7 +180,7 @@ def coverage_path_candidates(filename: str, sources: Iterable[str], repo_root: P
 
 
 def match_coverage_paths(report: CoverageReport, git_paths: Iterable[str], repo_root: Path | str) -> tuple[PathMatch, ...]:
-    """Associate paths only when one Cobertura class record maps to one Git path."""
+    """Associate every class record that maps to exactly one changed Git path."""
     _repository_root(repo_root)
     normalized_git = tuple(normalize_git_path(path) for path in git_paths)
     if len(set(normalized_git)) != len(normalized_git):
@@ -208,8 +209,11 @@ def match_coverage_paths(report: CoverageReport, git_paths: Iterable[str], repo_
         records = tuple(classes[index] for index in indices)
         if any(len(class_targets[index]) > 1 for index in indices):
             matches.append(PathMatch(path, PathMatchStatus.AMBIGUOUS, records, "a Cobertura class path matches multiple changed Git paths"))
-        elif len(indices) > 1:
-            matches.append(PathMatch(path, PathMatchStatus.AMBIGUOUS, records, "multiple Cobertura class records match this Git path"))
         else:
-            matches.append(PathMatch(path, PathMatchStatus.MATCHED, records, "one Cobertura class path matched"))
+            reason = (
+                "one Cobertura class path matched"
+                if len(indices) == 1
+                else "multiple Cobertura classes matched one Git path"
+            )
+            matches.append(PathMatch(path, PathMatchStatus.MATCHED, records, reason))
     return tuple(matches)

@@ -21,8 +21,8 @@ def test_controlled_evaluation_matches_all_reviewed_expected_results(tmp_path):
 
     assert report["passed"] is True
     assert report["summary"] == {
-        "line_candidates": 16,
-        "line_correct": 16,
+        "line_candidates": 18,
+        "line_correct": 18,
         "line_incorrect": 0,
         "line_mapping_accuracy": 100.0,
         "branch_candidates": 3,
@@ -35,7 +35,7 @@ def test_controlled_evaluation_matches_all_reviewed_expected_results(tmp_path):
     }
     saved = json.loads((output / "results.json").read_text(encoding="utf-8"))
     assert saved == report
-    assert len(report["cases"]) == 13
+    assert len(report["cases"]) == 14
 
 
 def test_evaluation_rejects_expected_case_ids_that_do_not_match_manifest(tmp_path):

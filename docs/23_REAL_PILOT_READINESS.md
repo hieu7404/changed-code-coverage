@@ -2,13 +2,34 @@
 
 ## Status
 
-**Readiness complete; execution pending a real local C# repository.** TC1 has no
-external repository in scope, so this document does not claim collector compatibility,
-mapping accuracy or review usefulness for any real project. It defines the bounded
-procedure to run when an authorized local pilot is available.
+**Readiness complete; preliminary public execution started.** A user-authorized
+local clone of the public `ardalis/GuardClauses` repository has passed an initial
+compatibility run. This observation does not yet establish real-pilot mapping accuracy
+or reviewer usefulness; the acceptance criteria below still require representative,
+classifiable committed diffs and recorded manual observations.
 
 Use one existing C# project and its existing test runner. Do not replace its framework,
 add a CI gate, upload source/coverage, or commit generated artifacts to the pilot.
+
+## Preliminary public reference observation
+
+The public reference pilot used its existing xUnit project targeting .NET 8 and its
+existing Coverlet collector. All 959 tests passed, and the selected Cobertura export
+contained class-level line evidence for 60 classes.
+
+The first upstream diff contained 21 changed head lines. Twenty test-source lines were
+unmatched because the collector excluded the test assembly. The production-source
+change was line 1, which had no explicit instrumentation entry and correctly remained
+`unknown`. The export also contained a primary class and a compiler-generated async
+state-machine class naming the same source file. That observation produced
+[D026](10_DECISION_LOG.md#d026---resolve-multiple-coverage-classes-at-the-changed-line-level):
+TC1 now resolves such records per changed line while keeping repeated same-line
+evidence ambiguous.
+
+A diagnostic against explicit evidence in that real export confirmed line 30 as
+`covered` with 12 hits after the change. It was not part of the selected upstream
+diff, so it validates collector compatibility but does not count as the required
+manual classifiable-diff sample. Generated pilot artifacts remain local and uncommitted.
 
 ## Entry criteria
 

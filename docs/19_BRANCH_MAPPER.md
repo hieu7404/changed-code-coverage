@@ -20,8 +20,9 @@ or `None` for unknown evidence.
 ## Branch contract
 
 A branch result is considered only for a changed line with class-level branch signal.
-A reliable result requires a one-to-one path match, exactly one class-level line record,
-`branch="true"`, and a `condition-coverage` aggregate in this shape:
+A reliable result requires an unambiguous file-path match, exactly one class-level
+record at the changed line across all matched classes, `branch="true"`, and a
+`condition-coverage` aggregate in this shape:
 
 ```text
 <percentage>% (<covered>/<total>)
@@ -59,8 +60,8 @@ git diff --check
 ```
 
 Focused cases cover full, partial and zero aggregate coverage; malformed/contradictory
-metadata; duplicate records; method-only/unmatched evidence; unavailable files; and
-Git result ordering.
+metadata; multiple compiler-generated classes for one file; duplicate same-line
+records; method-only/unmatched evidence; unavailable files; and Git result ordering.
 
 ## Limitations
 

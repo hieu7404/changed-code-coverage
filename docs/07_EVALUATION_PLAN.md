@@ -20,6 +20,7 @@ E10 fully covered branch
 E11 partially covered branch
 E12 branch metadata ambiguous/missing
 E13 no classifiable changed code
+E14 multiple coverage classes for one source file
 ```
 
 ## Metrics

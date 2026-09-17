@@ -90,7 +90,7 @@ Validated: JSON, Markdown and standalone HTML consume the same metrics-ready `An
 
 ## WP10
 
-Validated: 13 controlled scenarios pass through the production mapping/metrics pipeline with 16/16 line and 3/3 branch findings correct. See [evaluation evidence and limits](22_EVALUATION.md).
+Validated: 14 controlled scenarios pass through the production mapping/metrics pipeline with 18/18 line and 3/3 branch findings correct. See [evaluation evidence and limits](22_EVALUATION.md).
 
 - [x] Controlled scenarios
 - [x] Expected manifests
@@ -100,14 +100,21 @@ Validated: 13 controlled scenarios pass through the production mapping/metrics p
 
 ## WP11
 
-Readiness is documented for an authorized local C# project; no external pilot repository is in scope yet. See [real-pilot readiness](23_REAL_PILOT_READINESS.md).
+Readiness is documented and a preliminary public reference compatibility run is complete. Representative classifiable diffs and recorded manual observations are still pending. See [real-pilot readiness](23_REAL_PILOT_READINESS.md).
 
 - [x] Real-pilot readiness runbook and manifest template
-- [ ] Real pilot execution when an authorized repository is available
+- [x] Preliminary public repo test/collector/TC1 compatibility run
+- [ ] Complete sampled real-pilot validation with classifiable committed diffs
 
 ## WP12
 - [ ] Controlled fixtures pass and sampled diff mappings are manually validated
 - [ ] Report-only CI
+
+## User-approved demo extension
+
+- [x] Static local viewer for an existing TC1 JSON report
+- [x] Bundled representative data, file upload, filters, and optional ReportGenerator link
+- [x] No backend, persistence, or duplicate coverage calculation
 
 ## WP13 â€” Optional, post-MVP
 - [ ] Mapping validated and unknown rate understood
@@ -115,6 +122,6 @@ Readiness is documented for an authorized local C# project; no external pilot re
 - [ ] Optional gate only after the above conditions
 
 ## Handover
-- [ ] Reproducible local setup and demo
+- [x] Reproducible local setup and demo
 - [ ] Evaluation summary and known limitations
 - [ ] Generated outputs follow the artifact policy

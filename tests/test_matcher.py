@@ -43,15 +43,47 @@ def test_explicit_hits_classify_covered_uncovered_and_missing_lines():
 
 def test_unmatched_and_ambiguous_paths_are_unknown_not_uncovered():
     unmatched = mapped(coverage('<class filename="src/A.cs"><lines/></class>'), change("src/B.cs", 3))
-    ambiguous = mapped(coverage(
-        '<class filename="src/A.cs"><lines/></class>'
-        '<class filename="src/A.cs"><lines/></class>'
-    ), change("src/A.cs", 3))
+    ambiguous_report = parse_cobertura(
+        b'<coverage><sources><source>first</source><source>second</source></sources>'
+        b'<packages><package><classes><class filename="A.cs"><lines/></class>'
+        b'</classes></package></packages></coverage>'
+    )
+    ambiguous = mapped(
+        ambiguous_report,
+        change("first/A.cs", 3),
+        change("second/A.cs", 3),
+    )
     assert unmatched.lines[0] == unmatched.lines[0].__class__(
         unmatched.lines[0].location, CoverageStatus.UNKNOWN, "path_unmatched"
     )
-    assert ambiguous.lines[0].reason == "path_ambiguous"
-    assert ambiguous.lines[0].status is CoverageStatus.UNKNOWN
+    assert all(item.reason == "path_ambiguous" for item in ambiguous.lines)
+    assert all(item.status is CoverageStatus.UNKNOWN for item in ambiguous.lines)
+
+
+def test_multiple_classes_for_one_file_resolve_unique_evidence_per_changed_line():
+    result = mapped(coverage(
+        '<class filename="src/A.cs" name="Primary"><lines>'
+        '<line number="3" hits="2"/></lines></class>'
+        '<class filename="src/A.cs" name="&lt;RunAsync&gt;d__1"><lines>'
+        '<line number="4" hits="0"/></lines></class>'
+    ), change("src/A.cs", 3, 4, 5))
+    assert [(item.location.line, item.status, item.reason, item.hits) for item in result.lines] == [
+        (3, CoverageStatus.COVERED, "explicit_positive_hits", 2),
+        (4, CoverageStatus.UNCOVERED, "explicit_zero_hits", 0),
+        (5, CoverageStatus.UNKNOWN, "no_explicit_line_evidence", None),
+    ]
+
+
+def test_same_line_in_multiple_classes_remains_ambiguous_even_with_equal_hits():
+    result = mapped(coverage(
+        '<class filename="src/A.cs" name="Primary"><lines>'
+        '<line number="3" hits="2"/></lines></class>'
+        '<class filename="src/A.cs" name="Generated"><lines>'
+        '<line number="3" hits="2"/></lines></class>'
+    ), change("src/A.cs", 3))
+    assert result.lines[0].status is CoverageStatus.UNKNOWN
+    assert result.lines[0].reason == "ambiguous_line_evidence"
+    assert result.lines[0].hits is None
 
 
 def test_duplicate_class_line_records_are_ambiguous_even_with_equal_hits():

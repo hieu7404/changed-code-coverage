@@ -22,8 +22,8 @@ explicit and reliable.
 
 | Evidence | Status | Reason |
 | --- | --- | --- |
-| One matched class-level entry, hits > 0 | `covered` | `explicit_positive_hits` |
-| One matched class-level entry, hits = 0 | `uncovered` | `explicit_zero_hits` |
+| One explicit entry at the changed line across all matched classes, hits > 0 | `covered` | `explicit_positive_hits` |
+| One explicit entry at the changed line across all matched classes, hits = 0 | `uncovered` | `explicit_zero_hits` |
 | No matching path | `unknown` | `path_unmatched` |
 | Ambiguous path | `unknown` | `path_ambiguous` |
 | No primary class line inventory | `unknown` | `class_has_no_primary_line_evidence` |
@@ -31,9 +31,12 @@ explicit and reliable.
 | Repeated entry at the changed line | `unknown` | `ambiguous_line_evidence` |
 | Git file is unavailable | `unknown` | `file_unavailable:<reason>` |
 
-Method-level Cobertura records are never substituted for missing class-level evidence.
-Repeated records are not deduplicated, even when their hit counts agree. This preserves
-the rule that missing or unreliable evidence is not uncovered.
+Multiple Cobertura classes may name one source file, as happens with compiler-generated
+async/iterator state machines. The mapper considers all their primary line inventories
+but requires exactly one entry at the changed line. Method-level records are never
+substituted for missing class-level evidence. Repeated same-line records are not
+deduplicated, even when their hit counts agree. This preserves the rule that missing
+or unreliable evidence is not uncovered.
 
 ## Historical CLI boundary
 
@@ -49,8 +52,9 @@ line results. No report output is written or overwritten.
 git diff --check
 ```
 
-Focused cases cover covered, uncovered, missing, unmatched, ambiguous, duplicate,
-method-only and unavailable-file evidence, plus Git result order.
+Focused cases cover covered, uncovered, missing, unmatched, ambiguous, same-file
+compiler-generated classes, duplicate same-line records, method-only and
+unavailable-file evidence, plus Git result order.
 
 ## Limitations
 

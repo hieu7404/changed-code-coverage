@@ -84,4 +84,8 @@ Do not start with:
 - DB;
 - multi-language support.
 
+The static local viewer in [Demo viewer](24_DEMO_VIEWER.md) is a user-approved
+presentation exception: it reads an existing JSON artifact only and adds no backend,
+dashboard service, or coverage-analysis logic.
+
 The first success criterion is a correct deterministic mapper.

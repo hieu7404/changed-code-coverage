@@ -76,11 +76,11 @@ def test_one_cobertura_record_that_can_name_two_changed_files_is_ambiguous(tmp_p
     assert all("multiple changed Git paths" in item.reason for item in results)
 
 
-def test_multiple_cobertura_records_for_one_git_path_are_ambiguous(tmp_path):
+def test_multiple_cobertura_records_for_one_git_path_are_matched_for_line_resolution(tmp_path):
     results = match_coverage_paths(report("src/File.cs", "src/File.cs"), ["src/File.cs"], tmp_path)
-    assert results[0].status is PathMatchStatus.AMBIGUOUS
+    assert results[0].status is PathMatchStatus.MATCHED
     assert len(results[0].classes) == 2
-    assert "multiple Cobertura class records" in results[0].reason
+    assert results[0].reason == "multiple Cobertura classes matched one Git path"
 
 
 def test_case_insensitive_windows_candidate_rejects_case_colliding_git_paths(tmp_path):

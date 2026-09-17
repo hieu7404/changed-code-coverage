@@ -2,7 +2,7 @@
 
 ## Status
 
-The deterministic controlled evaluation is complete. All 13 reviewed scenarios pass
+The deterministic controlled evaluation is complete. All 14 reviewed scenarios pass
 through the production Cobertura parser, path resolver, line/branch mapper and WP8
 metrics. The suite does not substitute synthetic expected values for production mapping
 logic.
@@ -43,18 +43,19 @@ differs from its reviewed expectation.
 | E09 | Windows-style Cobertura path normalization |
 | E10–E11 | Fully and partially covered reliable branch aggregates |
 | E12 | Missing branch aggregate remains `unknown` |
-| E13 | Ambiguous and unmatched paths remain `unknown` with no denominator entry |
+| E13 | Duplicate same-line evidence and an unmatched path remain `unknown` |
+| E14 | Multiple classes for one source file resolve unique evidence per changed line |
 
 E03 mirrors the manual E2E sample result: a committed change to the intentionally
 untested 20% discount return mapped to `uncovered`, with zero hits.
 
 ## Result
 
-The initial controlled run passed all 13 cases:
+The current controlled run passes all 14 cases:
 
 | Metric | Value |
 | --- | ---: |
-| Line candidates / correct / incorrect | 16 / 16 / 0 |
+| Line candidates / correct / incorrect | 18 / 18 / 0 |
 | Line mapping accuracy | 100.0% |
 | Branch findings / correct / incorrect | 3 / 3 / 0 |
 | Branch mapping accuracy | 100.0% |
@@ -82,5 +83,7 @@ suite's 100% result as evidence of reviewer productivity or real-repository accu
   arbitrary external repository.
 - No human reviewer-time pilot or real-pilot sample has been run yet.
 
-Next bounded step: **WP11 real-pilot execution**, once a suitable local C# repository
-is available; [readiness is documented](23_REAL_PILOT_READINESS.md). The reviewer-time pilot may run later without changing the mapper.
+Next bounded step: continue **WP11 real-pilot execution** with representative,
+classifiable committed diffs and recorded manual observations; [readiness and the
+preliminary public reference observation are documented](23_REAL_PILOT_READINESS.md).
+The reviewer-time pilot may run later without changing the mapper.

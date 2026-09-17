@@ -1,7 +1,8 @@
 """Map changed Git head lines to explicit class-level Cobertura evidence.
 
-Only one-to-one path matches and one explicit class-level line record can establish
-coverage. Missing, unavailable or ambiguous evidence stays unknown.
+Only an unambiguous path match and one explicit class-level record at the changed line
+can establish coverage. Multiple classes may name the same source file, but repeated
+evidence at the same line remains unknown.
 """
 
 from tc1.branch_mapper import map_changed_branches
@@ -20,13 +21,17 @@ def _line_result(location: SourceLocation, match: PathMatch, unavailable_reason:
         return _unknown(location, "path_unmatched")
     if match.status is PathMatchStatus.AMBIGUOUS:
         return _unknown(location, "path_ambiguous")
-    if len(match.classes) != 1:
-        return _unknown(location, "path_match_without_one_class")
-
-    coverage_class = match.classes[0]
-    if not coverage_class.lines_present:
+    if not match.classes:
+        return _unknown(location, "path_match_without_classes")
+    classes_with_lines = tuple(item for item in match.classes if item.lines_present)
+    if not classes_with_lines:
         return _unknown(location, "class_has_no_primary_line_evidence")
-    entries = tuple(item for item in coverage_class.lines if item.location.line == location.line)
+    entries = tuple(
+        entry
+        for coverage_class in classes_with_lines
+        for entry in coverage_class.lines
+        if entry.location.line == location.line
+    )
     if not entries:
         return _unknown(location, "no_explicit_line_evidence")
     if len(entries) != 1:

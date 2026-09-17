@@ -40,6 +40,18 @@ def test_changed_branch_line_exposes_aggregate_without_true_false_identity():
     assert results[0].aggregate == BranchAggregate(1, 2)
 
 
+def test_multiple_classes_for_one_file_resolve_unique_branch_evidence_per_line():
+    results = mapped(coverage(
+        '<class filename="src/A.cs" name="Primary"><lines>'
+        '<line number="8" hits="3" branch="true" condition-coverage="50% (1/2)"/>'
+        '</lines></class>'
+        '<class filename="src/A.cs" name="&lt;RunAsync&gt;d__1"><lines>'
+        '<line number="62" hits="1"/></lines></class>'
+    ), change("src/A.cs", 8))
+    assert results[0].reason == "aggregate_condition_coverage"
+    assert results[0].aggregate == BranchAggregate(1, 2)
+
+
 def test_zero_covered_outcomes_and_decimal_percentages_are_valid_aggregates():
     results = mapped(coverage(
         '<class filename="src/A.cs"><lines>'
@@ -75,6 +87,19 @@ def test_duplicate_branch_line_evidence_is_unknown_even_when_equal():
     results = mapped(coverage(
         '<class filename="src/A.cs"><lines>'
         '<line number="3" hits="4" branch="true" condition-coverage="50% (1/2)"/>'
+        '<line number="3" hits="4" branch="true" condition-coverage="50% (1/2)"/>'
+        '</lines></class>'
+    ), change("src/A.cs", 3))
+    assert results[0].reason == "ambiguous_branch_line_evidence"
+    assert results[0].aggregate is None
+
+
+def test_same_branch_line_in_multiple_classes_remains_ambiguous():
+    results = mapped(coverage(
+        '<class filename="src/A.cs" name="Primary"><lines>'
+        '<line number="3" hits="4" branch="true" condition-coverage="50% (1/2)"/>'
+        '</lines></class>'
+        '<class filename="src/A.cs" name="Generated"><lines>'
         '<line number="3" hits="4" branch="true" condition-coverage="50% (1/2)"/>'
         '</lines></class>'
     ), change("src/A.cs", 3))

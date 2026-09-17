@@ -35,13 +35,18 @@ def _aggregate(entry) -> BranchAggregate | None:
 
 
 def _branch_result(location: SourceLocation, match: PathMatch, unavailable_reason: str | None) -> BranchResult | None:
-    if match.status is not PathMatchStatus.MATCHED or len(match.classes) != 1:
-        # Without a unique class line record we cannot even identify a branch candidate.
+    if match.status is not PathMatchStatus.MATCHED or not match.classes:
+        # Without reliable file identity we cannot identify a branch candidate.
         return None
-    coverage_class = match.classes[0]
-    if not coverage_class.lines_present:
+    classes_with_lines = tuple(item for item in match.classes if item.lines_present)
+    if not classes_with_lines:
         return None
-    entries = tuple(item for item in coverage_class.lines if item.location.line == location.line)
+    entries = tuple(
+        entry
+        for coverage_class in classes_with_lines
+        for entry in coverage_class.lines
+        if entry.location.line == location.line
+    )
     signals = tuple(item for item in entries if _has_branch_signal(item))
     if not signals:
         return None

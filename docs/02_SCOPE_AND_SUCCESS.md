@@ -65,7 +65,7 @@
 - [ ] unit tests.
 - [ ] integration test.
 - [ ] deterministic fixtures.
-- [x] controlled evaluation (13 reviewed cases; see [WP10 evaluation](22_EVALUATION.md)).
+- [x] controlled evaluation (14 reviewed cases; see [WP10 evaluation](22_EVALUATION.md)).
 - [ ] known limitations documented.
 
 ### Research

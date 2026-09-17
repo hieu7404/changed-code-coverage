@@ -30,10 +30,12 @@ matches = match_coverage_paths(coverage_report, changed_git_paths, repo_root)
 - Windows-syntax coverage evidence compares case-insensitively. POSIX-syntax evidence
   stays case-sensitive even when TC1 runs on Windows; case collisions are ambiguous.
 
-`matched` means exactly one Cobertura class record names exactly one changed Git path.
-`unmatched` means no class record names it. `ambiguous` means one class can name
-multiple Git paths, or multiple class records name one Git path. Only `matched` is
-usable by WP6; all other statuses must become `unknown`, never `uncovered`.
+`matched` means every matching Cobertura class record names exactly one changed Git
+path. Multiple class records may name that same file; WP6/WP7 resolve their primary
+evidence at each changed line. `unmatched` means no class record names the path.
+`ambiguous` means at least one class record can name multiple changed Git paths.
+Only `matched` is usable by WP6; all other statuses must become `unknown`, never
+`uncovered`.
 
 ## Historical CLI boundary
 
@@ -49,11 +51,13 @@ git diff --check
 ```
 
 Focused cases cover Windows/POSIX syntax, source roots, absolute and relative paths,
-path escapes, duplicate classes, multiple candidates and case collisions.
+path escapes, multiple classes for one file, multiple path candidates and case
+collisions.
 
 ## Limitations
 
 - Resolution is lexical: it does not follow symlinks or open files.
-- Conflicting line evidence inside a matched class remains for WP6 to resolve.
+- Conflicting line evidence inside or across matched classes remains for WP6 to
+  resolve at the changed-line level.
 
 Next bounded step: **WP6 line mapper**.

@@ -238,6 +238,7 @@ number of unavailable outcomes. There is currently no branch-exclusion input mod
 See [WP8 metrics](20_METRICS.md).
 
 Fill during implementation:
+
 ## Pending decisions
 
 
@@ -268,3 +269,31 @@ WP10 keeps one reviewed Cobertura fixture, Git-like change manifests and expecte
 **Accepted**
 
 WP11 readiness is documented without accessing or assuming an external repository. A real pilot must be one authorized local C# repository with its existing tests, a reviewed committed diff, valid Cobertura class-level evidence and manual finding observations. Pilot paths, source content, credentials and internal URLs remain outside this repository; generated material stays in approved local artifacts. No CI gate follows from readiness alone. See [real-pilot readiness](23_REAL_PILOT_READINESS.md).
+
+## D025 - Static report viewer for local demonstrations
+**Accepted**
+
+The user approved a static, dependency-free presentation extension after the MVP was
+demo-ready. `demo/` may render an already generated TC1 JSON artifact from a local
+file or a caller-provided URL. It owns no coverage semantics: the established JSON
+contract remains the sole input, and all metrics and classifications remain the
+deterministic TC1 result. No server, authentication, storage, source viewer, CI
+integration, or gate is introduced. See [static demo viewer](24_DEMO_VIEWER.md).
+
+## D026 - Resolve multiple coverage classes at the changed-line level
+**Accepted**
+
+A Cobertura export may contain several class records for one C# source file, including
+compiler-generated async/iterator state-machine classes. This relation is not path
+ambiguity when every record identifies the same single changed Git path. TC1 retains
+all matching classes and resolves their primary evidence separately for each changed
+line.
+
+Exactly one explicit entry at that line can classify it as covered or uncovered.
+Repeated same-line entries remain `unknown` even when their hit counts agree; a class
+record that can name multiple changed Git paths remains `path_ambiguous`. Branch
+mapping uses the same line-level rule. TC1 does not filter class names or prefer a
+record based on compiler-name heuristics.
+
+See [path normalization](17_PATH_NORMALIZATION.md), [line mapping](18_LINE_MAPPER.md),
+and [branch mapping](19_BRANCH_MAPPER.md).

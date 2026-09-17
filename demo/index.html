@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="TC1 changed-code coverage demonstration viewer">
+  <title>TC1 · Changed-Code Coverage</title>
+  <link rel="stylesheet" href="styles.css">
+  <script defer src="app.js"></script>
+</head>
+<body>
+  <header class="hero">
+    <div>
+      <p class="eyebrow">TC1 · Changed-Code Coverage Analyzer</p>
+      <h1>Evidence for the code that changed.</h1>
+      <p class="lede">A local demonstration of deterministic changed-code coverage: what was exercised, what was missed, and what the evidence cannot establish.</p>
+    </div>
+    <div class="hero-note"><strong>Evidence rule</strong><span>Unknown is not uncovered.</span></div>
+  </header>
+
+  <main>
+    <section class="mode-intro">
+      <div>
+        <p class="section-kicker">Changed-code report</p>
+        <h2>See a sample or open your TC1 result</h2>
+        <p class="muted">The sample explains the evidence states. Choose a generated <code>report.json</code> to replace it with your result.</p>
+      </div>
+      <span id="source-badge" class="source-badge source-showcase">Sample report</span>
+    </section>
+
+    <section id="report-panel">
+      <section class="load-panel" aria-label="Report input">
+        <div>
+          <h2>Report</h2>
+          <p id="report-source" class="muted"></p>
+        </div>
+        <div class="load-actions">
+          <label class="file-button"><span>Open report.json</span><input id="report-file" type="file" accept="application/json,.json"></label>
+          <button id="load-showcase" class="button-secondary" type="button">Show sample report</button>
+        </div>
+        <p id="load-error" class="error" role="alert"></p>
+      </section>
+
+      <section class="context" aria-label="Analysis context">
+        <div><span>Base revision</span><code id="base-revision">—</code></div>
+        <div><span>Head revision</span><code id="head-revision">—</code></div>
+        <div><span>JSON schema</span><code id="schema-version">—</code></div>
+      </section>
+
+      <section class="summary-grid" aria-label="Changed-code coverage metrics">
+        <article class="summary-card">
+          <div class="summary-heading"><p>Changed lines</p><strong id="line-coverage">—</strong></div>
+          <p id="line-ratio" class="ratio">—</p><dl id="line-counts" class="count-grid"></dl>
+        </article>
+        <article class="summary-card">
+          <div class="summary-heading"><p>Changed branches</p><strong id="branch-coverage">—</strong></div>
+          <p id="branch-ratio" class="ratio">—</p><dl id="branch-counts" class="count-grid"></dl>
+        </article>
+      </section>
+
+      <section class="findings-section" aria-labelledby="line-findings-title">
+        <div class="section-heading"><div><p class="section-kicker">Evidence inventory</p><h2 id="line-findings-title">Changed-line findings</h2></div><p id="line-finding-count" class="muted"></p></div>
+        <div class="filters" aria-label="Filter changed-line findings">
+          <label>State<select id="status-filter"><option value="all">All states</option><option value="covered">Covered</option><option value="uncovered">Uncovered</option><option value="unknown">Unknown</option></select></label>
+          <label>Path contains<input id="path-filter" type="search" placeholder="e.g. DiscountService"></label>
+        </div>
+        <div class="table-wrap"><table><thead><tr><th>Path</th><th>Line</th><th>Status</th><th>Hits</th><th>Evidence reason</th></tr></thead><tbody id="line-findings"></tbody></table></div>
+      </section>
+
+      <section class="secondary-grid">
+        <article class="findings-section" aria-labelledby="branch-findings-title"><div class="section-heading"><div><p class="section-kicker">Reliable aggregates only</p><h2 id="branch-findings-title">Branch findings</h2></div></div><div class="table-wrap compact-table"><table><thead><tr><th>Path</th><th>Line</th><th>Covered / total</th><th>Evidence reason</th></tr></thead><tbody id="branch-findings"></tbody></table></div></article>
+        <article class="findings-section" aria-labelledby="excluded-lines-title"><div class="section-heading"><div><p class="section-kicker">Outside denominator</p><h2 id="excluded-lines-title">Excluded lines</h2></div></div><div class="table-wrap compact-table"><table><thead><tr><th>Path</th><th>Line</th><th>Reason</th></tr></thead><tbody id="excluded-findings"></tbody></table></div></article>
+      </section>
+
+      <section class="evidence-card" aria-labelledby="evidence-title"><div><p class="section-kicker">Supporting evidence</p><h2 id="evidence-title">ReportGenerator coverage HTML</h2></div><div id="supporting-evidence" class="evidence-content"></div></section>
+    </section>
+
+  </main>
+
+  <footer>TC1 reports instrumentation evidence. <strong>Unknown is not uncovered.</strong></footer>
+
+  <script id="showcase-report" type="application/json">
+{
+  "schema_version": "1.0",
+  "analysis": {"base": "9b7e1c4", "head": "d3a8f51"},
+  "metrics": {
+    "lines": {"candidates": 12, "classifiable": 8, "covered": 4, "uncovered": 4, "unknown": 2, "excluded": 2, "coverage_percent": 50.0},
+    "branches": {"candidates": 5, "classifiable": 4, "covered": 3, "uncovered": 1, "unknown": 1, "excluded": 0, "coverage_percent": 75.0}
+  },
+  "lines": [
+    {"path": "src/Pricing/DiscountService.cs", "line": 18, "status": "covered", "reason": "explicit_positive_hits", "hits": 12},
+    {"path": "src/Pricing/DiscountService.cs", "line": 26, "status": "uncovered", "reason": "explicit_zero_hits", "hits": 0},
+    {"path": "src/Tax/TaxCalculator.cs", "line": 31, "status": "covered", "reason": "explicit_positive_hits", "hits": 7},
+    {"path": "src/Tax/TaxCalculator.cs", "line": 36, "status": "uncovered", "reason": "explicit_zero_hits", "hits": 0},
+    {"path": "src/Orders/OrderValidator.cs", "line": 14, "status": "covered", "reason": "explicit_positive_hits", "hits": 4},
+    {"path": "src/Orders/OrderValidator.cs", "line": 22, "status": "uncovered", "reason": "explicit_zero_hits", "hits": 0},
+    {"path": "src/Shipping/DeliveryWindow.cs", "line": 9, "status": "covered", "reason": "explicit_positive_hits", "hits": 2},
+    {"path": "src/Shipping/DeliveryWindow.cs", "line": 17, "status": "uncovered", "reason": "explicit_zero_hits", "hits": 0},
+    {"path": "src/Legacy/PromotionAdapter.cs", "line": 44, "status": "unknown", "reason": "no_explicit_line_evidence", "hits": null},
+    {"path": "src/Integrations/PaymentGateway.cs", "line": 63, "status": "unknown", "reason": "ambiguous_path_mapping", "hits": null}
+  ],
+  "excluded_lines": [
+    {"path": "src/Generated/CountryCatalog.g.cs", "line": 3, "reason": "explicit_generated_code_exclusion"},
+    {"path": "src/Generated/CountryCatalog.g.cs", "line": 4, "reason": "explicit_generated_code_exclusion"}
+  ],
+  "branches": [
+    {"path": "src/Pricing/DiscountService.cs", "line": 18, "reason": "aggregate_condition_coverage", "aggregate": {"covered": 2, "total": 2, "uncovered": 0}},
+    {"path": "src/Tax/TaxCalculator.cs", "line": 31, "reason": "aggregate_condition_coverage", "aggregate": {"covered": 1, "total": 2, "uncovered": 1}},
+    {"path": "src/Legacy/PromotionAdapter.cs", "line": 44, "reason": "branch_aggregate_unreliable", "aggregate": null}
+  ],
+  "supporting_evidence": {"report_generator_html": "artifacts/tc1/coverage/index.html", "available": false}
+}
+  </script>
+</body>
+</html>
