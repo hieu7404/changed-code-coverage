@@ -297,3 +297,19 @@ record based on compiler-name heuristics.
 
 See [path normalization](17_PATH_NORMALIZATION.md), [line mapping](18_LINE_MAPPER.md),
 and [branch mapping](19_BRANCH_MAPPER.md).
+
+## D027 - Explicit repository-relative path exclusions
+**Accepted**
+
+TC1 provides a repeatable `--exclude-path` mechanism rather than hard-coding policy
+for generated, test, vendor or project-specific files. Rules use a small portable,
+case-sensitive glob dialect: `*` and `?` stay within a path segment while `**` crosses
+segments. Absolute and parent-escaping rules are invalid. Backslashes normalize to
+forward slashes so invocation semantics do not depend on the host OS.
+
+The first matching rule excludes every changed head line in that file before line and
+branch mapping. Each line stays visible as `ExcludedLine` with a `path_rule:<pattern>`
+reason and remains outside the line denominator. TC1 does not map or fabricate branch
+outcomes for excluded lines; the branch model therefore continues to report zero
+explicit exclusions. No default rules or project configuration file are introduced
+in this increment. See [line mapping](18_LINE_MAPPER.md) and [reports](21_REPORTS.md).

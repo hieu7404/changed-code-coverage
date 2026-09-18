@@ -37,6 +37,7 @@ class AnalysisRequest:
     markdown_output: Path | None = None
     html_output: Path | None = None
     report_generator_html: Path | None = None
+    exclude_paths: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)

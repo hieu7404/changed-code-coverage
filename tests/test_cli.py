@@ -63,12 +63,14 @@ def test_arguments_reach_pipeline_without_path_guessing(monkeypatch):
         "--coverage", "input/coverage.xml", "--json", "output/report.json",
         "--markdown", "output/report.md", "--html", "output/index.html",
         "--report-generator-html", "output/coverage/index.html",
+        "--exclude-path", "**/*.g.cs", "--exclude-path", "vendor/**",
     ]) == 0
     assert received == [AnalysisRequest(
         repo=Path("repo with spaces"), base="feature~1", head="feature",
         coverage=Path("input/coverage.xml"), json_output=Path("output/report.json"),
         markdown_output=Path("output/report.md"), html_output=Path("output/index.html"),
         report_generator_html=Path("output/coverage/index.html"),
+        exclude_paths=("**/*.g.cs", "vendor/**"),
     )]
 
 
@@ -203,3 +205,30 @@ def test_analyze_accepts_canonical_cobertura_entries_without_report_destinations
     captured = capsys.readouterr()
     assert captured.out == ""
     assert captured.err == ""
+
+
+def test_analyze_writes_explicit_path_exclusions(git_repo, tmp_path):
+    base = git_repo.commit()
+    git_repo.write("src/Generated.g.cs", "first\nsecond\n")
+    git_repo.commit()
+    coverage = tmp_path / "coverage.xml"
+    coverage.write_text("<coverage><packages/></coverage>", encoding="utf-8")
+    output = tmp_path / "report.json"
+
+    assert cli.main([
+        "analyze", "--repo", str(git_repo.path), "--base", base,
+        "--coverage", str(coverage), "--json", str(output),
+        "--exclude-path", "**/*.g.cs",
+    ]) == 0
+
+    report = json.loads(output.read_text(encoding="utf-8"))
+    assert report["lines"] == []
+    assert report["branches"] == []
+    assert report["metrics"]["lines"] == {
+        "candidates": 2, "classifiable": 0, "covered": 0, "uncovered": 0,
+        "unknown": 0, "excluded": 2, "coverage_percent": None,
+    }
+    assert report["excluded_lines"] == [
+        {"path": "src/Generated.g.cs", "line": 1, "reason": "path_rule:**/*.g.cs"},
+        {"path": "src/Generated.g.cs", "line": 2, "reason": "path_rule:**/*.g.cs"},
+    ]

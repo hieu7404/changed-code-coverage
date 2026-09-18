@@ -38,11 +38,28 @@ substituted for missing class-level evidence. Repeated same-line records are not
 deduplicated, even when their hit counts agree. This preserves the rule that missing
 or unreliable evidence is not uncovered.
 
-## Historical CLI boundary
+## Explicit path exclusions
 
-`tc1 analyze` now resolves Git, parses Cobertura and maps changed lines before it stops
-with an explicit WP7-WP9 error. The message includes raw input counts and the number of
-line results. No report output is written or overwritten.
+The combined pipeline accepts ordered, repository-relative path globs:
+
+```python
+analysis = map_changed_code(
+    git_diff_result,
+    coverage_report,
+    exclude_paths=("**/*.g.cs", "vendor/**"),
+)
+```
+
+TC1 applies these rules before both line and branch mapping. Every changed head line
+in a matching file becomes an `ExcludedLine` with reason `path_rule:<pattern>`; it is
+not also reported as covered, uncovered or unknown. The first matching pattern wins.
+Patterns are case-sensitive, normalize `\` to `/`, and support `*` and `?` within one
+path segment plus `**` across segments. Absolute and parent-escaping patterns fail as
+invalid input. TC1 supplies no default exclusion rules.
+
+Because the collector identifies branch candidates only during mapping, branches on
+an excluded changed line are not mapped or counted. TC1 does not invent an excluded
+branch count from source text.
 
 ## Validation
 
@@ -54,12 +71,12 @@ git diff --check
 
 Focused cases cover covered, uncovered, missing, unmatched, ambiguous, same-file
 compiler-generated classes, duplicate same-line records, method-only and
-unavailable-file evidence, plus Git result order.
+unavailable-file evidence, Git result order, portable glob semantics, first-rule
+selection, invalid patterns, and exclusion before line/branch mapping.
 
 ## Limitations
 
-- Exclusions and percentages remain WP8.
-- Branch evidence remains raw until WP7.
-- The CLI intentionally exposes no line-result report until WP9.
-
-Next bounded step: **WP7 branch mapper**.
+- Exclusions currently come from repeatable CLI arguments or the Python API; a
+  project configuration file is not implemented.
+- Rules apply to whole files, not individual line ranges or source syntax categories.
+- TC1 does not infer generated code, test code or other policy-specific exclusions.

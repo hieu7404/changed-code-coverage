@@ -18,6 +18,9 @@ build/
 # Keep run output under this root; coverage fixtures elsewhere must remain trackable.
 /artifacts/
 
+# Local external pilot/reference clones; never commit their source or generated output.
+/references/
+
 # IDE / OS
 .vscode/
 .idea/

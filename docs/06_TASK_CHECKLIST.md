@@ -76,6 +76,7 @@ See [Cobertura evidence and limitations](16_COBERTURA_PARSER.md).
 - [x] Line denominator
 - [x] Branch denominator
 - [x] Unknown/exclusion counts
+- [x] Explicit path exclusion rules before line/branch mapping
 - [x] Null coverage case
 
 ## WP9

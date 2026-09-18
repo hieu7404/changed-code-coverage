@@ -43,6 +43,10 @@ def build_parser() -> argparse.ArgumentParser:
         "--report-generator-html", type=Path,
         help="optional ReportGenerator HTML entry point to link as supporting evidence",
     )
+    analyze.add_argument(
+        "--exclude-path", action="append", default=[], metavar="PATTERN",
+        help="exclude changed lines matching a repository-relative path glob (repeatable)",
+    )
     return parser
 
 
@@ -101,7 +105,7 @@ def analyze(request: AnalysisRequest) -> None:
     """Read, map, summarize and write every report explicitly requested."""
     changes = read_git_diff(request.repo, request.base, request.head)
     coverage = read_cobertura(request.coverage)
-    analysis = attach_metrics(map_changed_code(changes, coverage))
+    analysis = attach_metrics(map_changed_code(changes, coverage, request.exclude_paths))
     _write_reports(_requested_reports(request, analysis))
 
 
@@ -116,6 +120,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         markdown_output=args.markdown_output,
         html_output=args.html_output,
         report_generator_html=args.report_generator_html,
+        exclude_paths=tuple(args.exclude_path),
     )
     try:
         analyze(request)

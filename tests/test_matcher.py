@@ -136,3 +136,26 @@ def test_combined_result_keeps_line_and_branch_results_together():
     combined = map_changed_code(changes, report)
     assert combined.lines[0].status is CoverageStatus.COVERED
     assert combined.branches[0].aggregate == BranchAggregate(1, 2)
+
+
+def test_combined_result_excludes_matching_lines_before_line_and_branch_mapping():
+    report = coverage(
+        '<class filename="src/Service.cs"><lines>'
+        '<line number="3" hits="4" branch="true" condition-coverage="50% (1/2)"/>'
+        '</lines></class>'
+        '<class filename="src/Generated.g.cs"><lines>'
+        '<line number="7" hits="0" branch="true" condition-coverage="0% (0/2)"/>'
+        '</lines></class>'
+    )
+    changes = GitDiffResult(
+        Path("F:/repo"), "base", "head", "merge",
+        (change("src/Service.cs", 3), change("src/Generated.g.cs", 7)),
+    )
+
+    combined = map_changed_code(changes, report, ("**/*.g.cs",))
+
+    assert [item.location.path for item in combined.lines] == ["src/Service.cs"]
+    assert [item.location.path for item in combined.branches] == ["src/Service.cs"]
+    assert [(item.location.path, item.location.line, item.reason) for item in combined.excluded_lines] == [
+        ("src/Generated.g.cs", 7, "path_rule:**/*.g.cs"),
+    ]

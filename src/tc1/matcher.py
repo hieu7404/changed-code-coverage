@@ -6,6 +6,7 @@ evidence at the same line remains unknown.
 """
 
 from tc1.branch_mapper import map_changed_branches
+from tc1.exclusions import partition_excluded_changes
 from tc1.models import AnalysisResult, CoverageReport, CoverageStatus, GitDiffResult, LineResult, SourceLocation
 from tc1.path_normalizer import PathMatch, PathMatchStatus, match_coverage_paths
 
@@ -58,10 +59,14 @@ def map_changed_lines(changes: GitDiffResult, coverage: CoverageReport) -> Analy
     return AnalysisResult(changes.base_commit, changes.head_commit, lines=tuple(results))
 
 
-def map_changed_code(changes: GitDiffResult, coverage: CoverageReport) -> AnalysisResult:
-    """Return one shared analysis result for the completed line and branch stages."""
-    lines = map_changed_lines(changes, coverage)
+def map_changed_code(
+    changes: GitDiffResult, coverage: CoverageReport, exclude_paths: tuple[str, ...] = (),
+) -> AnalysisResult:
+    """Apply explicit exclusions, then map included line and branch evidence."""
+    included_changes, excluded_lines = partition_excluded_changes(changes, exclude_paths)
+    lines = map_changed_lines(included_changes, coverage)
     return AnalysisResult(
         lines.base, lines.head, lines=lines.lines,
-        branches=map_changed_branches(changes, coverage),
+        branches=map_changed_branches(included_changes, coverage),
+        excluded_lines=excluded_lines,
     )

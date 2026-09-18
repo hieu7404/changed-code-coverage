@@ -16,6 +16,19 @@ WP8; they do not recalculate classifications, denominators or percentages.
 --html <path>
 ```
 
+It also accepts repeatable, repository-relative path exclusions:
+
+```text
+--exclude-path "**/*.g.cs"
+--exclude-path "**/*.Designer.cs"
+--exclude-path "vendor/**"
+```
+
+Rules are explicit per invocation; TC1 has no implicit project-specific exclusions.
+They support `*`, `?` and `**`, use `/` as the normalized separator, and are matched
+case-sensitively against Git paths. Each excluded changed head line remains in the
+report with `path_rule:<pattern>` as its reason and stays outside the denominator.
+
 No destination means TC1 validates and maps the requested evidence without writing a
 report. Every supplied parent directory is created. Destinations must be distinct;
 TC1 rejects a collision before writing anything. Output paths are resolved relative
@@ -73,6 +86,8 @@ git diff --check
 - TC1 reports only evidence already produced by the collector and mapper.
 - A missing ReportGenerator page is reported as unavailable; TC1 does not generate it.
 - Output writes are individual files; WP9 does not provide a multi-file transaction.
+- Project configuration files are not yet supported; repeat CLI options define the
+  exclusion policy for each invocation.
 - No coverage threshold or CI gate is introduced.
 
 Next bounded step: **WP11 real-pilot readiness**.

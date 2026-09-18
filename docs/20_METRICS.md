@@ -53,6 +53,10 @@ Consequently:
 candidates = classifiable + unknown + excluded
 ```
 
+The combined analysis pipeline creates explicit exclusions from caller-supplied path
+rules before coverage mapping. Excluded changed lines remain findings with their
+matching rule as the reason; they never enter `classifiable`.
+
 ### Branch counts
 
 A reliable `BranchAggregate(covered, total)` contributes `total` branch candidates:
@@ -60,7 +64,9 @@ A reliable `BranchAggregate(covered, total)` contributes `total` branch candidat
 `BranchResult` contributes one unknown candidate. This visible finding does not claim
 that exactly one branch outcome is unavailable; the collector did not provide its
 outcome count safely. The current input model has no explicit branch exclusion, so
-branch `excluded` is zero.
+branch `excluded` is zero. Branches on excluded changed lines are not mapped, because
+TC1 cannot determine their reliable outcome count without processing collector
+evidence.
 
 This accounting keeps reliable aggregate outcomes in the branch denominator while
 preserving unreliable branch evidence without treating it as uncovered.
