@@ -26,6 +26,11 @@ covered / uncovered / unknown
 JSON + Markdown + HTML report
 ```
 
+The local end-to-end analyzer is implemented and usable for coverage review.
+Current documentation starts at `docs/00_START_HERE.md`; delivery status is in
+`docs/03_TASK_CHECKLIST.md`. No CI workflow or blocking gate is implemented, and a
+trustworthy threshold policy remains unresolved. Do not restart completed MVP work.
+
 ## 2. Authority order
 
 When instructions conflict, use this order:
@@ -130,7 +135,7 @@ Do not add without explicit user approval:
 - mutation testing;
 - blocking CI gates.
 
-Useful ideas belong in `docs/11_FUTURE_WORK.md`.
+Useful ideas belong in `docs/06_FUTURE_WORK.md`.
 
 ## 8. Deterministic evidence rules
 
@@ -302,7 +307,7 @@ Update durable docs when implementation changes affect:
 - known limitations;
 - important decisions.
 
-Record durable decisions in `docs/10_DECISION_LOG.md`.
+Record durable decisions in `docs/05_DECISION_LOG.md`.
 
 ## 17. Handoff format
 

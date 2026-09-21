@@ -1,91 +1,26 @@
-# Start Here
+# Documentation map
 
-## 1. Purpose of this repo
+TC1's local end-to-end coverage review flow is implemented. Start with the
+[README](../README.md), then choose the document for your task.
 
-This is a **standalone TC1 side project**.
+| Need | Read |
+| --- | --- |
+| Install, collect coverage, analyze a diff, open reports | [End-to-end runbook](01_DEMO_RUNBOOK.md) |
+| Understand mapping, denominators, CLI and report contracts | [Architecture and coverage rules](02_ARCHITECTURE.md) |
+| See what works and what remains | [Current status](03_TASK_CHECKLIST.md) |
+| Reproduce evaluation or validate a real C# pilot | [Validation](04_EVALUATION_PLAN.md) |
+| Understand accepted design choices | [Decision log](05_DECISION_LOG.md) |
+| Consider later work and CI prerequisites | [Future work](06_FUTURE_WORK.md) |
 
-Do not assume access to any company/DMS workspace.
+Local references: [C# sample](../sample-dotnet/README.md),
+[evaluation assets](../eval/README.md), [fixtures](../fixtures/README.md),
+and [contributor rules](../AGENTS.md).
 
-The immediate goal is to build and validate the TC1 MVP locally.
+These seven documents describe current behavior. Earlier work-package plans,
+bootstrap prompts and implementation diaries are retained in Git history rather
+than duplicated in the active documentation. Files are numbered consecutively
+from `00` to `06` in the reading order above.
 
-## 2. What TC1 does
-
-```text
-Git diff
-= what changed?
-
-Coverage
-= what did tests execute?
-
-TC1
-= which changed code was or was not exercised?
-```
-
-## 3. Local-first strategy
-
-Because the real target repository may be unavailable at the beginning:
-
-### Stage A — controlled local pilot
-
-Use a small C# sample inside:
-
-```text
-sample-dotnet/
-```
-
-Purpose:
-- develop the mapper;
-- validate semantics;
-- create deterministic fixtures;
-- prove the CLI/report flow.
-
-### Stage B — real pilot later
-
-When access to a real C# repository is available:
-
-- keep TC1 architecture unchanged;
-- point TC1 at the real repo;
-- select compatible coverage tooling;
-- validate mappings on sampled real diffs.
-
-Do not hard-code the local sample into the TC1 engine.
-
-## 4. Recommended working order
-
-```text
-WP0  environment + local pilot
-WP1  coverage baseline
-WP2  Python bootstrap
-WP3  Git diff parser
-WP4  Cobertura parser
-WP5  path normalization
-WP6  line mapper
-WP7  branch mapper
-WP8  metrics
-WP9  reports
-WP10 evaluation
-WP11 [real-pilot readiness](23_REAL_PILOT_READINESS.md) (execution when access is available)
-WP12 optional report-only CI
-WP13 optional CI gate (post-MVP, explicit approval required)
-```
-
-Work package numbers follow [Implementation Plan](05_IMPLEMENTATION_PLAN.md).
-Handover documentation is maintained throughout the work and finalized for the local MVP;
-it does not depend on optional CI or access to a real pilot.
-
-## 5. What not to do yet
-
-Do not start with:
-- LLMs;
-- Graft;
-- OpenCodeReview integration;
-- dashboards;
-- Docker/Kubernetes;
-- DB;
-- multi-language support.
-
-The static local viewer in [Demo viewer](24_DEMO_VIEWER.md) is a user-approved
-presentation exception: it reads an existing JSON artifact only and adds no backend,
-dashboard service, or coverage-analysis logic.
-
-The first success criterion is a correct deterministic mapper.
+**Product boundary:** TC1 supplies report-only evidence for review. CI automation
+has not been implemented, and no trusted coverage threshold has been established
+for a blocking gate.

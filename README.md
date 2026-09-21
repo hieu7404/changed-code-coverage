@@ -1,119 +1,73 @@
-# TC1 Ã¢â‚¬â€ Changed-Code Coverage Analyzer
+# TC1 — Changed-Code Coverage Analyzer
 
-TC1 is a small software-engineering/research side project that measures **coverage on changed code**, rather than relying only on repository-wide coverage.
+TC1 checks which lines changed between two Git revisions were exercised by tests.
+It combines a committed Git diff with Cobertura coverage and produces JSON,
+Markdown and HTML reports for reviewing C#/.NET changes.
 
-## Core question
-
-> What code changed, and did the current test suite actually exercise that changed code?
-
-## Basic flow
-
-```text
-Git diff
-Ã¢â€ â€™ changed code
-
-Coverage export
-Ã¢â€ â€™ executed code
-
-Git diff + coverage
-Ã¢â€ â€™ TC1 mapper
-Ã¢â€ â€™ covered / uncovered / unknown
-```
-
-## Why this matters
-
-A repository can have:
+**The local end-to-end flow is implemented and usable for coverage review.**
+TC1 is report-only: it has no CI workflow, coverage threshold or blocking CI gate.
+A trustworthy threshold policy still needs representative diff validation and a
+team decision about unknown evidence, exclusions and minimum usable evidence.
 
 ```text
-Overall coverage:      85%
-Changed-code coverage: 30%
+Tests at head -> Cobertura XML + ReportGenerator HTML
+Git base...head + Cobertura -> TC1 -> JSON / Markdown / HTML
 ```
 
-The overall number may look healthy while the current change is poorly protected by tests.
+## Start using TC1
 
-## MVP stack
+Requirements: Python 3.11+ and Git. Producing fresh sample coverage also requires
+the .NET SDK selected by [sample-dotnet/global.json](sample-dotnet/global.json)
+and PowerShell for its collection script.
 
-- Python 3.11+ for the TC1 mapper
-- one C#/.NET pilot
-- existing C# test runner
-- Coverlet when compatible
-- Cobertura XML
-- ReportGenerator
-- pytest
-- Git CLI
+From the repository root, on Linux/macOS:
 
-## Portable setup
-
-This repository is standalone.
-
-It does **not** depend on:
-- a specific Windows username/path;
-- a DMS workspace;
-- company network access;
-- AI APIs;
-- external datasets;
-- downloaded models.
-
-The first local pilot can be a small controlled C# sample. A real company C# project can be integrated later without changing the TC1 architecture.
-
-## Read first
-
-1. `AGENTS.md`
-2. `docs/00_START_HERE.md`
-3. `docs/01_PROJECT_BRIEF.md`
-4. `docs/04_ENVIRONMENT_SETUP.md`
-5. `docs/05_IMPLEMENTATION_PLAN.md`
-6. `docs/06_TASK_CHECKLIST.md`
-
-## MVP result
-
-Expected artifact:
-
-```text
-Changed-Code Coverage
-
-Lines
-  candidates:   20
-  classifiable: 15
-  covered:      10
-  uncovered:     5
-  unknown:       3
-  excluded:      2
-  coverage:     66.67%
-
-Branches
-  candidates:    4
-  classifiable:  3
-  covered:       2
-  uncovered:     1
-  unknown:       1
-  coverage:     66.67%
+```bash
+python3 -m venv .venv
+. .venv/bin/activate
+python -m pip install -e ".[dev]"
+python -m tc1 analyze --help
 ```
 
-## Current implementation
+On Windows PowerShell, use `python -m venv .venv`, then
+`.venv/Scripts/python.exe -m pip install -e ".[dev]"`. Use that Python executable
+in place of `python` below if the environment is not activated.
 
-WP0-WP8 are complete: the C# sample has a validated coverage baseline, and the Python
-tool reads Git changes and Cobertura evidence, resolves paths without guessing file
-identity, applies explicit repository-relative path exclusions, maps remaining changed
-lines and reliable branch aggregates, and derives one shared line/branch metric summary.
-Unknown and excluded findings remain visible outside the coverage denominator; a zero
-denominator is `null`. WP9 renders JSON, Markdown and standalone HTML from that same
-metrics-ready result, with an explicit optional link to ReportGenerator supporting
-evidence. WP10 adds a committed controlled evaluation suite: all 14 cases currently
-match their reviewed expectations.
-See [Python setup](docs/14_PYTHON_BOOTSTRAP.md),
-[Git diff](docs/15_GIT_DIFF_PARSER.md), and
-[Cobertura parsing](docs/16_COBERTURA_PARSER.md), and
-[path normalization](docs/17_PATH_NORMALIZATION.md), and
-[line mapping](docs/18_LINE_MAPPER.md), and
-[branch mapping](docs/19_BRANCH_MAPPER.md), and
-[metrics](docs/20_METRICS.md), [reports](docs/21_REPORTS.md), [controlled evaluation](docs/22_EVALUATION.md), and [real-pilot readiness](docs/23_REAL_PILOT_READINESS.md).
+With coverage collected from the selected committed head, replace `BASE_REV`:
 
-For a local presentation, the user-approved static [demo viewer](docs/24_DEMO_VIEWER.md)
-can display an existing TC1 JSON report without a backend or a second calculation.
+```bash
+python -m tc1 analyze --repo . --base BASE_REV --head HEAD --coverage artifacts/tc1/coverage.cobertura.xml --json artifacts/tc1/report.json --markdown artifacts/tc1/report.md --html artifacts/tc1/index.html
+```
 
-## Important scope rule
+Open `artifacts/tc1/index.html`. For collection, a sample diff, ReportGenerator,
+another local C# repository and the optional viewer, follow the
+[end-to-end runbook](docs/01_DEMO_RUNBOOK.md).
 
-The MVP is **not** an AI code-review agent.
+## Read the result
 
-Build the deterministic coverage mapper first. AI-related extensions can be considered only after MVP validation.
+| Finding | Meaning |
+| --- | --- |
+| `covered` | One reliable explicit line entry has positive hits |
+| `uncovered` | One reliable explicit line entry has zero hits |
+| `unknown` | Evidence is missing, ambiguous or unreliable |
+| Excluded | An explicit caller-supplied path rule removes the line from analysis |
+
+Coverage is `covered / (covered + uncovered)`. Unknown and excluded findings stay
+visible outside the denominator; an empty denominator is `null`, not 0%.
+Branches use reliable collector aggregates without guessed true/false identities.
+Coverage demonstrates execution; it does not establish assertion quality or code correctness.
+
+## Documentation
+
+- [Documentation map](docs/00_START_HERE.md)
+- [Current status and remaining work](docs/03_TASK_CHECKLIST.md)
+- [Coverage rules and architecture](docs/02_ARCHITECTURE.md)
+- [Validation evidence and real-pilot procedure](docs/04_EVALUATION_PLAN.md)
+
+The controlled evaluation covers 14 reviewed scenarios. Representative real-diff
+validation and reviewer-time research remain pending; see the validation document
+for the limits of these results.
+
+This is a standalone repository. Runtime analysis uses Python's standard library
+and the Git CLI; it requires no company workspace, AI service or database.
+Generated output belongs under ignored `artifacts/`. Contributors follow [AGENTS.md](AGENTS.md).

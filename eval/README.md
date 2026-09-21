@@ -1,23 +1,25 @@
-# Evaluation
+# Evaluation assets
 
-WP10 commits deterministic inputs and reviewed expected results. The runner evaluates
-the production mapping/metrics pipeline and writes only generated output under
-`artifacts/eval/<run-id>/`.
+The runner compares production mapping/metrics outputs with reviewed expectations.
+After installing TC1, run from the repository root:
 
-```text
-eval/
-├── cases/controlled.json       # controlled Git-like change inventories
-├── expected/controlled.json    # reviewed public findings and metrics
-├── reviewer_pilot.md           # manual protocol; not automated or completed
-├── real_pilot_manifest.template.json # private local-pilot observation template
-└── run_eval.py                 # runner
+```bash
+python eval/run_eval.py --run-id controlled
 ```
 
-The shared Cobertura fixture is `fixtures/evaluation/controlled.xml`. Run:
+Use the virtual environment's Python executable if it is not activated.
+Results are written to `artifacts/eval/controlled/results.json`; use another run ID
+to keep multiple runs. A mismatch exits nonzero.
 
-```powershell
-.venv/Scripts/python.exe eval/run_eval.py --run-id controlled
-```
+| Asset | Purpose |
+| --- | --- |
+| `cases/controlled.json` | 14 controlled Git-like change inventories |
+| `expected/controlled.json` | Reviewed public findings and metrics |
+| `../fixtures/evaluation/controlled.xml` | Shared Cobertura evidence |
+| `run_eval.py` | Evaluation entry point |
+| `real_pilot_manifest.template.json` | Template for local manual pilot observations |
+| [reviewer_pilot.md](reviewer_pilot.md) | Prepared voluntary reviewer-time protocol; not yet executed |
 
-See [WP10 evaluation](../docs/22_EVALUATION.md) for scenario definitions, accuracy
-semantics, known limits and the reviewer-time pilot boundary.
+See [validation evidence and pilot procedure](../docs/04_EVALUATION_PLAN.md) for
+scenario definitions, accuracy semantics and limitations. Evaluation success does
+not establish an application coverage threshold or a CI gate.

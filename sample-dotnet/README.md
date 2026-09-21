@@ -1,114 +1,54 @@
-# Local C# Pilot
+# Controlled C# sample
 
-WP0 and WP1 are complete: all 7 tests pass and the coverage baseline is validated.
+This sample supplies real coverage evidence for TC1's local end-to-end flow.
+Start with the [runbook](../docs/01_DEMO_RUNBOOK.md) to collect coverage and analyze
+committed changes.
 
-## Contents
+## Current sample contract
 
-- `Tc1.Sample/DiscountService.cs`: a pure decimal calculation with deterministic branches.
-- `Tc1.Sample.Tests/DiscountServiceTests.cs`: fixed expected results and invalid-input checks.
-- `Tc1.Sample.slnx`: the library and test project.
-- `global.json`: SDK 10.0.401, allowing later patches in the same feature band.
-- `NuGet.Config`: public nuget.org package source; no company feed required.
+`Tc1.Sample/DiscountService.cs` implements a synthetic decimal policy without rounding:
 
-The target is `net10.0`. Tests use xUnit 2.9.3, the Visual Studio adapter 3.1.4,
-and Microsoft.NET.Test.Sdk 17.14.1. The TC1 engine must not depend on this sample's rules.
-
-## Sample contract
-
-This is a synthetic policy, not a production business rule. No rounding is applied.
-
-| Subtotal | Result | WP0 test inputs |
+| Subtotal | Current result | Existing tests |
 | --- | --- | --- |
-| Below 0 | Throw ArgumentOutOfRangeException for subtotal | -1, -100 |
+| Below 0 | Throw `ArgumentOutOfRangeException` | -1, -100 |
 | 0 to below 100 | No discount | 0, 99 |
-| 100 to below 1000 | 10% discount | 100, 250, 999 |
-| 1000 and above | 20% discount | Intentionally not tested |
+| 100 to below 1000 | Multiply by `0.90m` (10% discount) | 100, 250, 999 |
+| 1000 and above | Multiply by `0.75m` (25% discount) | Intentionally untested |
 
-The last path is deliberately omitted to provide a known test gap for WP1.
-WP1 has verified this test gap against real Cobertura and ReportGenerator output.
-See the coverage baseline link below for measured line hits and branch aggregates.
+Seven xUnit cases leave the bulk return uncovered intentionally. The original
+baseline used `0.80m` for that path; see [recorded validation](../docs/04_EVALUATION_PLAN.md#recorded-c-baseline).
+The TC1 engine does not depend on these business rules.
 
-## Run with an installed SDK
+## Tooling
 
-From the repository root, using PowerShell:
+The sample targets `net10.0`. [global.json](global.json) pins SDK 10.0.401 with
+`latestPatch` roll-forward. Run direct `dotnet` commands inside this directory so
+that SDK selection applies. The projects use xUnit 2.9.3, adapter 3.1.4,
+Microsoft.NET.Test.Sdk 17.14.1 and Coverlet collector 6.0.4.
+The local tool manifest pins ReportGenerator 5.5.11; `NuGet.Config` uses nuget.org.
 
-```powershell
-Push-Location sample-dotnet
-dotnet --version
+For build/tests only, from the repository root:
+
+```bash
+cd sample-dotnet
 dotnet restore Tc1.Sample.slnx --configfile NuGet.Config
 dotnet build Tc1.Sample.slnx --no-restore --configuration Debug
-dotnet test Tc1.Sample.slnx --no-build --configuration Debug --results-directory ../artifacts/test-results/wp0 --logger "trx;LogFileName=sample-tests.trx"
-Pop-Location
+dotnet test Tc1.Sample.slnx --no-build --configuration Debug --results-directory ../artifacts/test-results/sample --logger "trx;LogFileName=sample-tests.trx"
+cd ..
 ```
 
-Run inside `sample-dotnet/` so the CLI discovers its `global.json`.
-Stop and resolve any failed command before continuing.
-
-## Optional repository-local SDK on Windows
-
-The initial machine had Git 2.55.0 and Python 3.14.6, but only .NET 6 runtime,
-with no SDK. WP0 installed SDK 10.0.401 under `artifacts/tools/dotnet/`.
-It did not change global PATH or install a machine-wide SDK.
-The SDK/cache is ignored by Git and must be installed again on a fresh checkout.
-
-To reproduce that installation from the repository root (requires internet):
+Stop on a failed command. To run the full test/coverage/ReportGenerator collection
+from the repository root instead:
 
 ```powershell
-New-Item -ItemType Directory -Force artifacts/tools | Out-Null
-Invoke-WebRequest -UseBasicParsing https://dot.net/v1/dotnet-install.ps1 -OutFile artifacts/tools/dotnet-install.ps1
-powershell -NoProfile -ExecutionPolicy Bypass -File artifacts/tools/dotnet-install.ps1 -Version 10.0.401 -InstallDir artifacts/tools/dotnet -NoPath
+powershell -NoProfile -File sample-dotnet/Collect-Coverage.ps1
 ```
 
-See Microsoft's [dotnet-install documentation](https://learn.microsoft.com/en-us/dotnet/core/tools/dotnet-install-script).
+Use `pwsh` for PowerShell 7, or pass `-Dotnet` to select an installed executable.
+The script resolves paths itself and restores its process environment afterward.
+It includes only `Tc1.Sample`, excludes test assemblies, preserves line hit counts
+and disables ReportGenerator risk-hotspot selection.
 
-Then run these commands from the repository root. Environment variables apply only
-to this PowerShell session; SDK state and NuGet packages stay under `artifacts/`.
-
-```powershell
-$wp0Root = (Get-Location).Path
-$env:DOTNET_ROOT = Join-Path $wp0Root 'artifacts/tools/dotnet'
-$env:DOTNET_CLI_HOME = Join-Path $wp0Root 'artifacts/tools/dotnet-home'
-$env:NUGET_PACKAGES = Join-Path $wp0Root 'artifacts/tools/nuget-packages'
-$env:DOTNET_CLI_TELEMETRY_OPTOUT = '1'
-$env:DOTNET_GENERATE_ASPNET_CERTIFICATE = 'false'
-$env:DOTNET_SKIP_FIRST_TIME_EXPERIENCE = '1'
-$wp0Dotnet = Join-Path $env:DOTNET_ROOT 'dotnet.exe'
-
-Push-Location sample-dotnet
-& $wp0Dotnet --version
-& $wp0Dotnet restore Tc1.Sample.slnx --configfile NuGet.Config
-& $wp0Dotnet build Tc1.Sample.slnx --no-restore --configuration Debug
-& $wp0Dotnet test Tc1.Sample.slnx --no-build --configuration Debug --results-directory ../artifacts/test-results/wp0 --logger "trx;LogFileName=sample-tests.trx"
-Pop-Location
-```
-
-Stop and resolve any failed command before continuing. Commands assume the repository
-root is the starting directory and use no machine-specific paths.
-
-## Validated results and next step
-
-- Debug build: 0 warnings, 0 errors.
-- Tests: 7 passed, 0 failed, 0 skipped.
-- WP0 evidence: artifacts/test-results/wp0/sample-tests.trx.
-- WP1 baseline: 10/12 instrumented lines and 5/6 branch outcomes covered (83.33% each).
-- The 20% return at L16 has zero hits; L13 has positive hits but branch coverage is 1/2.
-- Python bootstrap is complete; see [WP2 setup](../docs/14_PYTHON_BOOTSTRAP.md).
-
-## Collect coverage
-
-From the repository root using the local SDK:
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File sample-dotnet/Collect-Coverage.ps1 -Dotnet ./artifacts/tools/dotnet/dotnet.exe
-```
-
-The script restores pinned Coverlet 6.0.4 and ReportGenerator 5.5.11, builds, tests,
-selects the current TRX coverage attachment, and generates the baseline bundle.
-
-Open artifacts/tc1/coverage/index.html.
-Cobertura is at artifacts/tc1/coverage.cobertura.xml; raw run evidence and logs are under
-artifacts/test-results/wp1-<uuid>/. All generated output is ignored by Git.
-
-See [the WP1 runbook](../docs/13_COVERAGE_BASELINE.md) for exact evidence,
-denominators, reproducibility, branch limitations and the resolved local policy blocker.
-These are whole-sample metrics; changed-code mapping is not implemented yet.
+Selected XML, supporting HTML and run metadata go under `artifacts/tc1/`; raw runs
+and logs go under `artifacts/test-results/`. Collection does not run the TC1 analyzer:
+continue with [report generation](../docs/01_DEMO_RUNBOOK.md#4-generate-tc1-reports).
