@@ -1,7 +1,7 @@
 """Read committed changes using merge-base..head (base...head semantics).
 
 No checkout, index mutation, network access, external diff, or text conversion.
-One raw inventory and a literal per-file patch avoid ambiguous quoted filenames.
+One raw inventory and literal per-file patches avoid ambiguous quoted filenames.
 """
 
 import os
@@ -15,7 +15,7 @@ from tc1.models import ChangeKind, FileChange, GitDiffResult
 
 _OID = re.compile(rb"(?:[0-9a-f]{40}|[0-9a-f]{64})")
 _DIFF_FLAGS = (
-    "--no-renames", "--no-ext-diff", "--no-textconv", "--no-color",
+    "--find-renames=100%", "--no-ext-diff", "--no-textconv", "--no-color",
     "--no-relative", "--ignore-submodules=none",
 )
 _REGULAR_MODES = {"100644", "100755"}
@@ -92,6 +92,15 @@ def read_git_diff(repo: Path | str, base: str, head: str = "HEAD") -> GitDiffRes
             files.append(FileChange(
                 entry.path, entry.kind, entry.old_mode, entry.new_mode,
                 unavailable_reason="unsupported_file_type",
+            ))
+            continue
+        if entry.kind is ChangeKind.RENAMED:
+            # R100 means file contents are identical. It is a file-identity
+            # change, not changed executable code, so do not request a path-limited
+            # patch (which Git would represent as a whole-file addition).
+            files.append(FileChange(
+                entry.path, entry.kind, entry.old_mode, entry.new_mode,
+                old_path=entry.old_path,
             ))
             continue
         patch = _git(

@@ -12,12 +12,14 @@ from tc1.models import ChangeKind, DiffHunk
 
 _RAW_HEADER = re.compile(
     rb":([0-7]{6}) ([0-7]{6}) ([0-9a-f]{40}|[0-9a-f]{64}) "
-    rb"([0-9a-f]{40}|[0-9a-f]{64}) ([AMDT])"
+    rb"([0-9a-f]{40}|[0-9a-f]{64}) (A|M|D|T|R100)"
 )
 _HUNK = re.compile(r"@@ -(\d+)(?:,(\d+))? \+(\d+)(?:,(\d+))? @@(?: .*)?")
 _NO_NEWLINE = "\\ No newline at end of file"
-_KINDS = {"A": ChangeKind.ADDED, "M": ChangeKind.MODIFIED,
-          "D": ChangeKind.DELETED, "T": ChangeKind.TYPE_CHANGED}
+_KINDS = {
+    "A": ChangeKind.ADDED, "M": ChangeKind.MODIFIED, "D": ChangeKind.DELETED,
+    "T": ChangeKind.TYPE_CHANGED, "R100": ChangeKind.RENAMED,
+}
 
 
 @dataclass(frozen=True)
@@ -26,6 +28,7 @@ class RawChange:
     kind: ChangeKind
     old_mode: str
     new_mode: str
+    old_path: str | None = None
 
 
 @dataclass(frozen=True)
@@ -34,39 +37,56 @@ class FilePatch:
     is_binary: bool = False
 
 
+def _path(raw_path: bytes) -> str:
+    try:
+        path = raw_path.decode("utf-8")
+    except UnicodeDecodeError as exc:
+        raise DiffParseError("Git filenames must be UTF-8; cannot safely represent this path") from exc
+    # Git tree names are relative POSIX paths; retain spaces, tabs and newlines.
+    if not path or path.startswith("/") or any(part in ("", ".", "..") for part in path.split("/")):
+        raise DiffParseError("invalid repository-relative path in raw Git diff")
+    return path
+
+
 def parse_raw_diff(data: bytes) -> tuple[RawChange, ...]:
-    """Read --raw --no-abbrev -z --no-renames; reject unsupported/ambiguous records."""
+    """Read --raw --no-abbrev -z with exact renames and reject other records."""
     if not data:
         return ()
     if not data.endswith(b"\0"):
         raise DiffParseError("truncated raw Git diff (missing NUL terminator)")
     fields = data[:-1].split(b"\0")
-    if len(fields) % 2:
-        raise DiffParseError("raw Git diff must contain header/path pairs")
     result = []
     seen = set()
-    for header, raw_path in zip(fields[::2], fields[1::2]):
+    index = 0
+    while index < len(fields):
+        header = fields[index]
         match = _RAW_HEADER.fullmatch(header)
         if match is None:
-            raise DiffParseError("unsupported raw Git diff header; rename/copy detection must be disabled")
-        try:
-            path = raw_path.decode("utf-8")
-        except UnicodeDecodeError as exc:
-            raise DiffParseError("Git filenames must be UTF-8; cannot safely represent this path") from exc
-        # Git tree names are relative POSIX paths; retain spaces, tabs and newlines.
-        if not path or path.startswith("/") or any(part in ("", ".", "..") for part in path.split("/")):
-            raise DiffParseError("invalid repository-relative path in raw Git diff")
+            raise DiffParseError("unsupported raw Git diff header; only exact renames are supported")
+        old_mode, new_mode, _, _, status = (part.decode("ascii") for part in match.groups())
+        field_count = 3 if status == "R100" else 2
+        if index + field_count > len(fields):
+            raise DiffParseError("truncated raw Git diff path record")
+        if status == "R100":
+            old_path = _path(fields[index + 1])
+            path = _path(fields[index + 2])
+            if old_path == path:
+                raise DiffParseError("exact rename source and destination paths must differ")
+        else:
+            old_path = None
+            path = _path(fields[index + 1])
         if path in seen:
             raise DiffParseError(f"duplicate path in raw Git diff: {path!r}")
         seen.add(path)
-        old_mode, new_mode, _, _, status = (part.decode("ascii") for part in match.groups())
         kind = _KINDS[status]
         if ((kind is ChangeKind.ADDED and (old_mode != "000000" or new_mode == "000000"))
                 or (kind is ChangeKind.DELETED and (new_mode != "000000" or old_mode == "000000"))
                 or (kind in (ChangeKind.MODIFIED, ChangeKind.TYPE_CHANGED)
-                    and "000000" in (old_mode, new_mode))):
+                    and "000000" in (old_mode, new_mode))
+                or (kind is ChangeKind.RENAMED and "000000" in (old_mode, new_mode))):
             raise DiffParseError("inconsistent file modes and change status")
-        result.append(RawChange(path, kind, old_mode, new_mode))
+        result.append(RawChange(path, kind, old_mode, new_mode, old_path))
+        index += field_count
     return tuple(sorted(result, key=lambda item: item.path))
 
 

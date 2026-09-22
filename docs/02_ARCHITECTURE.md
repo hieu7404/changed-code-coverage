@@ -32,10 +32,14 @@ Resolve base/head to commits and require exactly one merge base. Compare merge b
 to head, equivalent to `base...head`. Only added/replacement head lines become
 candidates; context, deleted lines and working-tree edits do not.
 
-Rename detection is disabled: renames become deletion plus addition, and copies
-become additions. Binary, deleted and non-regular files remain represented in the
-internal Git result without fabricated head lines. Current public reports contain
-mapped findings, not a complete inventory of those file-level limitations.
+TC1 detects exact-content Git renames only (`R100`). A pure rename is represented
+internally with its old and new paths but has no changed head-line candidates;
+therefore it cannot inflate changed-code coverage. Renames with content edits remain
+deletion plus addition until a similarity policy is separately validated. Copy
+detection remains disabled, so copies are additions. Binary, deleted and non-regular
+files remain represented in the internal Git result without fabricated head lines.
+Current public reports contain mapped findings, not a complete inventory of those
+file-level limitations.
 
 Git objects must be local. Bare repositories, non-UTF-8 filenames and ambiguous or
 missing history are unsupported. Acquisition uses literal per-file paths and disables

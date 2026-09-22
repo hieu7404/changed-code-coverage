@@ -73,20 +73,28 @@ def test_three_dot_uses_merge_base_and_ignores_worktree_and_index(git_repo):
     assert repo.git("status", "--porcelain=v1") == before
 
 
-def test_rename_and_copy_detection_are_explicitly_disabled(git_repo):
+def test_exact_rename_has_no_changed_head_lines(git_repo):
+    repo = git_repo
+    repo.write("Original.cs", "one\ntwo\n")
+    base = repo.commit()
+    repo.git("mv", "Original.cs", "Renamed.cs")
+    head = repo.commit()
+    result = git_diff.read_git_diff(repo.path, base, head)
+    assert [(item.path, item.kind, item.old_path, item.changed_lines) for item in result.files] == [
+        ("Renamed.cs", ChangeKind.RENAMED, "Original.cs", ()),
+    ]
+
+
+def test_copy_remains_an_added_file_even_when_git_config_requests_copy_detection(git_repo):
     repo = git_repo
     repo.write("Original.cs", "one\ntwo\n")
     base = repo.commit()
     repo.git("config", "diff.renames", "copies")
-    repo.write("Renamed.cs", "one\ntwo\n")
     repo.write("Copy.cs", "one\ntwo\n")
-    (repo.path / "Original.cs").unlink()
-    head = repo.commit()
-    result = git_diff.read_git_diff(repo.path, base, head)
+    repo.commit()
+    result = git_diff.read_git_diff(repo.path, base)
     assert [(item.path, item.kind, item.changed_lines) for item in result.files] == [
         ("Copy.cs", ChangeKind.ADDED, (1, 2)),
-        ("Original.cs", ChangeKind.DELETED, ()),
-        ("Renamed.cs", ChangeKind.ADDED, (1, 2)),
     ]
 
 

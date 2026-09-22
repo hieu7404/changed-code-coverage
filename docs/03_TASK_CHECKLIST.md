@@ -8,6 +8,7 @@ implementation stages.
 
 - [x] Controlled C#/.NET sample with xUnit, Coverlet and ReportGenerator collection.
 - [x] Committed Git comparison using a unique merge base and changed head lines.
+- [x] Exact-content rename handling without whole-file changed-code candidates.
 - [x] Cobertura parsing, portable lexical paths and ambiguity detection.
 - [x] Covered / uncovered / unknown line findings with explicit reasons.
 - [x] Reliable aggregate branch findings without semantic true/false guesses.

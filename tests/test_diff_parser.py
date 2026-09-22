@@ -69,11 +69,22 @@ def raw_record(path=b"F.cs", status=b"M", old_mode=b"100644", new_mode=b"100644"
     return b":" + old_mode + b" " + new_mode + b" " + b"1" * 40 + b" " + b"2" * 40 + b" " + status + b"\0" + path + b"\0"
 
 
+def raw_rename(old_path=b"Old.cs", new_path=b"New.cs"):
+    return raw_record(old_path, status=b"R100") + new_path + b"\0"
+
+
 def test_raw_paths_are_exact_and_sorted():
     paths = ["z.cs", "source/a b\tquoted\"\nname.cs", "src/Đơn hàng [1].cs"]
     entries = parse_raw_diff(b"".join(raw_record(path.encode()) for path in paths))
     assert [entry.path for entry in entries] == sorted(paths)
     assert all(entry.kind is ChangeKind.MODIFIED for entry in entries)
+
+
+def test_exact_rename_has_distinct_source_and_destination_paths():
+    entry = parse_raw_diff(raw_rename(b"src/Old.cs", b"src/New.cs"))[0]
+    assert (entry.kind, entry.old_path, entry.path) == (
+        ChangeKind.RENAMED, "src/Old.cs", "src/New.cs",
+    )
 
 
 @pytest.mark.parametrize("data", [
@@ -82,6 +93,7 @@ def test_raw_paths_are_exact_and_sorted():
     raw_record(path=b"../F.cs"), raw_record(path=b"/F.cs"), raw_record(path=b""),
     raw_record(path=b"a//F.cs"), raw_record(path=b"bad\xff.cs"),
     raw_record() + raw_record(),
+    raw_rename(b"Old.cs", b"Old.cs"), raw_rename(b"../Old.cs", b"New.cs"),
     raw_record(status=b"A"), raw_record(status=b"D"),
 ])
 def test_bad_raw_records_are_errors(data):

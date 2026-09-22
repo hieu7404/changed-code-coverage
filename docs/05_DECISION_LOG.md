@@ -28,7 +28,7 @@ Current behavior is defined in [architecture and coverage rules](02_ARCHITECTURE
 | D013 | Use a synthetic discount policy with an intentionally untested bulk path. Its current values live in the sample source; the original 20% bulk discount was later changed to 25%. |
 | D014 | Sample collection uses Coverlet 6.0.4 and ReportGenerator 5.5.11. Select the current TRX attachment, preserve XML bytes, and record source/XML hashes. |
 | D015 | Use a Python 3.11+ setuptools package, standard-library runtime, argparse CLI and pytest development extra. Both CLI entry points share one implementation. |
-| D016 | Compare a unique merge base to committed head. Disable rename/copy inference; preserve unsupported-file limitations without fabricated candidates. |
+| D016 | Compare a unique merge base to committed head. Detect exact-content renames only; preserve unsupported-file limitations without fabricated candidates. |
 | D017 | Preserve class-level evidence, method records and raw metadata separately. Reject malformed required fields; never synthesize missing hits. |
 | D018 | Resolve paths lexically without basename guessing. The original one-class-per-file restriction is superseded by D026. |
 | D019 | Classify a changed line only from unique explicit primary evidence. Missing or repeated evidence stays unknown; D026 defines the cross-class rule. |
@@ -86,3 +86,10 @@ When it is supplied, TC1 verifies the selected head, clean worktree and exact XM
 bytes before mapping. A mismatch fails the command rather than assigning candidate
 lines `unknown`; successful reports are `verified`, while no sidecar is explicitly
 `unverified`. `--require-provenance` makes verification mandatory.
+
+## D031 — Exact rename handling before similarity inference
+
+Use Git `R100` records only. A pure exact rename changes file identity but creates
+no changed executable-line candidates, avoiding a false whole-file addition. Do not
+enable copy detection or similarity-based renamed-with-edits inference until their
+candidate semantics have been evaluated; they remain addition/deletion evidence.

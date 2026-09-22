@@ -258,6 +258,7 @@ class ChangeKind(StrEnum):
     MODIFIED = "modified"
     DELETED = "deleted"
     TYPE_CHANGED = "type_changed"
+    RENAMED = "renamed"
 
 
 @dataclass(frozen=True)
@@ -283,6 +284,7 @@ class FileChange:
     hunks: tuple[DiffHunk, ...] = ()
     is_binary: bool = False
     unavailable_reason: str | None = None
+    old_path: str | None = None
 
     @property
     def changed_lines(self) -> tuple[int, ...]:
