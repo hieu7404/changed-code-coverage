@@ -55,10 +55,19 @@ def test_renderers_share_the_attached_metrics_and_keep_unknown_visible():
             "candidates": 3, "classifiable": 2, "covered": 1, "uncovered": 1,
             "unknown": 1, "excluded": 0, "coverage_percent": 50.0,
         },
+        "line_evidence": {
+            "in_scope": 3, "classifiable": 2, "classifiable_rate": 100 * 2 / 3,
+            "unknown_rate": 100 / 3,
+        },
     }
     assert "| 4 | 2 | 1 | 1 | 1 | 1 | 50.00% |" in markdown
+    assert "**Changed-code coverage:** 50.00%." in markdown
+    assert "**Evidence available for:** 66.67% of in-scope changed lines (2 / 3)." in markdown
+    assert "**Unknown evidence:** 33.33% of in-scope changed lines." in markdown
     assert "| 3 | 2 | 1 | 1 | 1 | 0 | 50.00% |" in markdown
     assert ">50.00%</td>" in html
+    assert "Evidence available for:</strong> 66.67% of in-scope changed lines (2 / 3)." in html
+    assert "Unknown evidence:</strong> 33.33% of in-scope changed lines." in html
     assert markdown.endswith("\n")
     assert html.startswith("<!doctype html>")
 
@@ -68,7 +77,7 @@ def test_json_schema_retains_evidence_and_is_deterministic():
     data = json.loads(rendered)
 
     assert rendered.endswith("\n")
-    assert data["schema_version"] == "1.0"
+    assert data["schema_version"] == "1.1"
     assert data["analysis"] == {"base": "base<rev>", "head": "head&rev"}
     assert data["lines"][0] == {
         "path": "src/Service|Name.cs", "line": 1, "status": "covered",
@@ -115,5 +124,8 @@ def test_renderers_show_not_applicable_for_zero_denominator():
     ))
 
     assert json.loads(render_json(analysis))["metrics"]["lines"]["coverage_percent"] is None
+    assert json.loads(render_json(analysis))["metrics"]["line_evidence"] == {
+        "in_scope": 1, "classifiable": 0, "classifiable_rate": 0.0, "unknown_rate": 100.0,
+    }
     assert "N/A" in render_markdown(analysis)
     assert ">N/A</td>" in render_html(analysis)

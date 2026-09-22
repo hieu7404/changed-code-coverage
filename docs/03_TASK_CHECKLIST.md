@@ -11,7 +11,7 @@ implementation stages.
 - [x] Cobertura parsing, portable lexical paths and ambiguity detection.
 - [x] Covered / uncovered / unknown line findings with explicit reasons.
 - [x] Reliable aggregate branch findings without semantic true/false guesses.
-- [x] Explicit path exclusions and shared metrics with visible denominators.
+- [x] Explicit path exclusions and shared metrics with visible coverage and line-evidence denominators.
 - [x] JSON, Markdown and standalone HTML reports; optional ReportGenerator link.
 - [x] Static local viewer for an existing JSON report.
 - [x] Automated module/integration tests and 14 reviewed controlled evaluation cases.

@@ -106,7 +106,9 @@ Open `artifacts/tc1/index.html`, or read `report.md` / `report.json` in the same
 3. Inspect unknown reasons before drawing conclusions. Missing instrumentation does
    not mean the line is untested.
 4. Read branch counts as aggregates. A covered line can still have uncovered branch outcomes.
-5. Check classifiable, unknown and excluded counts alongside the percentage.
+5. Check **Evidence available for** alongside the percentage. Changed-code coverage
+   applies only to classifiable lines; classifiable rate shows what fraction of
+   in-scope changed lines had direct evidence. Check unknown and excluded counts too.
 
 After adding tests, commit the desired head, collect fresh coverage and rerun TC1
 against the same intended comparison base. Coverage measures execution, not the

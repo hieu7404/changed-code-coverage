@@ -6,9 +6,9 @@ import json
 from typing import Any
 
 from tc1.errors import ModelValidationError
-from tc1.models import AnalysisResult, BranchAggregate, CoverageSummary
+from tc1.models import AnalysisResult, BranchAggregate, CoverageSummary, LineEvidenceSufficiency
 
-SCHEMA_VERSION = "1.0"
+SCHEMA_VERSION = "1.1"
 
 
 def _require_metrics(analysis: AnalysisResult) -> None:
@@ -39,6 +39,15 @@ def _aggregate_data(aggregate: BranchAggregate | None) -> dict[str, int] | None:
     }
 
 
+def _line_evidence_data(evidence: LineEvidenceSufficiency) -> dict[str, int | float | None]:
+    return {
+        "in_scope": evidence.in_scope,
+        "classifiable": evidence.classifiable,
+        "classifiable_rate": evidence.classifiable_rate,
+        "unknown_rate": evidence.unknown_rate,
+    }
+
+
 def analysis_data(
     analysis: AnalysisResult, *, report_generator_html: str | None = None,
     report_generator_available: bool = False,
@@ -51,6 +60,7 @@ def analysis_data(
         "metrics": {
             "lines": _summary_data(analysis.metrics.lines),
             "branches": _summary_data(analysis.metrics.branches),
+            "line_evidence": _line_evidence_data(analysis.metrics.line_evidence),
         },
         "lines": [
             {

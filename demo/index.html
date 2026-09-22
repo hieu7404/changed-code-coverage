@@ -50,7 +50,7 @@
       <section class="summary-grid" aria-label="Changed-code coverage metrics">
         <article class="summary-card">
           <div class="summary-heading"><p>Changed lines</p><strong id="line-coverage">—</strong></div>
-          <p id="line-ratio" class="ratio">—</p><dl id="line-counts" class="count-grid"></dl>
+          <p id="line-ratio" class="ratio">—</p><p id="line-evidence" class="evidence-rate">—</p><dl id="line-counts" class="count-grid"></dl>
         </article>
         <article class="summary-card">
           <div class="summary-heading"><p>Changed branches</p><strong id="branch-coverage">—</strong></div>
@@ -81,11 +81,12 @@
 
   <script id="showcase-report" type="application/json">
 {
-  "schema_version": "1.0",
+  "schema_version": "1.1",
   "analysis": {"base": "9b7e1c4", "head": "d3a8f51"},
   "metrics": {
     "lines": {"candidates": 12, "classifiable": 8, "covered": 4, "uncovered": 4, "unknown": 2, "excluded": 2, "coverage_percent": 50.0},
-    "branches": {"candidates": 5, "classifiable": 4, "covered": 3, "uncovered": 1, "unknown": 1, "excluded": 0, "coverage_percent": 75.0}
+    "branches": {"candidates": 5, "classifiable": 4, "covered": 3, "uncovered": 1, "unknown": 1, "excluded": 0, "coverage_percent": 75.0},
+    "line_evidence": {"in_scope": 10, "classifiable": 8, "classifiable_rate": 80.0, "unknown_rate": 20.0}
   },
   "lines": [
     {"path": "src/Pricing/DiscountService.cs", "line": 18, "status": "covered", "reason": "explicit_positive_hits", "hits": 12},

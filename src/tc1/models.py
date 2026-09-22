@@ -160,17 +160,49 @@ class CoverageSummary:
 
 
 @dataclass(frozen=True)
+class LineEvidenceSufficiency:
+    """How much of the in-scope changed-line set has classifiable evidence.
+
+    This is deliberately line-specific. Branch candidate counts can combine
+    collector outcome totals with unknown locations, so they are not a source
+    branch inventory suitable for an analogous rate.
+    """
+
+    in_scope: int
+    classifiable: int
+    classifiable_rate: float | None = field(init=False)
+    unknown_rate: float | None = field(init=False)
+
+    def __post_init__(self) -> None:
+        _count("in_scope", self.in_scope)
+        _count("classifiable", self.classifiable)
+        if self.classifiable > self.in_scope:
+            raise ModelValidationError("classifiable line evidence cannot exceed in_scope")
+        rate = None if self.in_scope == 0 else (100 * self.classifiable / self.in_scope)
+        object.__setattr__(self, "classifiable_rate", rate)
+        unknown_rate = None if self.in_scope == 0 else (100 * (self.in_scope - self.classifiable) / self.in_scope)
+        object.__setattr__(self, "unknown_rate", unknown_rate)
+
+
+@dataclass(frozen=True)
 class AnalysisMetrics:
-    """Line and branch summaries derived from one ``AnalysisResult``."""
+    """Coverage summaries and line-evidence sufficiency from one result."""
 
     lines: CoverageSummary
     branches: CoverageSummary
+    line_evidence: LineEvidenceSufficiency
 
     def __post_init__(self) -> None:
         if not isinstance(self.lines, CoverageSummary):
             raise ModelValidationError("lines must be a CoverageSummary")
         if not isinstance(self.branches, CoverageSummary):
             raise ModelValidationError("branches must be a CoverageSummary")
+        if not isinstance(self.line_evidence, LineEvidenceSufficiency):
+            raise ModelValidationError("line_evidence must be a LineEvidenceSufficiency")
+        if self.line_evidence.in_scope != self.lines.candidates - self.lines.excluded:
+            raise ModelValidationError("line evidence in_scope must equal line candidates minus exclusions")
+        if self.line_evidence.classifiable != self.lines.classifiable:
+            raise ModelValidationError("line evidence classifiable must equal line summary classifiable")
 
 
 @dataclass(frozen=True)

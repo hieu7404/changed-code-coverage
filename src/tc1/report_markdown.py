@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from tc1.errors import ModelValidationError
-from tc1.models import AnalysisResult, CoverageSummary
+from tc1.models import AnalysisResult, CoverageSummary, LineEvidenceSufficiency
 
 
 def _text(value: object) -> str:
@@ -26,6 +26,19 @@ def _summary(title: str, summary: CoverageSummary) -> list[str]:
     ]
 
 
+def _line_evidence(summary: CoverageSummary, evidence: LineEvidenceSufficiency) -> list[str]:
+    coverage = _percentage(summary)
+    rate = "N/A" if evidence.classifiable_rate is None else f"{evidence.classifiable_rate:.2f}%"
+    unknown_rate = "N/A" if evidence.unknown_rate is None else f"{evidence.unknown_rate:.2f}%"
+    return [
+        f"**Changed-code coverage:** {coverage}.",
+        f"**Evidence available for:** {rate} of in-scope changed lines "
+        f"({evidence.classifiable} / {evidence.in_scope}).",
+        f"**Unknown evidence:** {unknown_rate} of in-scope changed lines.",
+        "",
+    ]
+
+
 def render_markdown(
     analysis: AnalysisResult, *, report_generator_html: str | None = None,
     report_generator_available: bool = False,
@@ -42,6 +55,7 @@ def render_markdown(
         "",
     ]
     lines.extend(_summary("Changed Lines", analysis.metrics.lines))
+    lines.extend(_line_evidence(analysis.metrics.lines, analysis.metrics.line_evidence))
     lines.extend(_summary("Changed Branches", analysis.metrics.branches))
     lines.extend([
         "## Line Findings",

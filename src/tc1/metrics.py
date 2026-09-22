@@ -7,6 +7,7 @@ from tc1.models import (
     AnalysisResult,
     CoverageStatus,
     CoverageSummary,
+    LineEvidenceSufficiency,
 )
 
 
@@ -36,22 +37,28 @@ def calculate_metrics(analysis: AnalysisResult) -> AnalysisMetrics:
         branch_uncovered += result.aggregate.total - result.aggregate.covered
     branch_classifiable = branch_covered + branch_uncovered
 
+    line_summary = CoverageSummary(
+        candidates=line_classifiable + line_unknown + line_excluded,
+        classifiable=line_classifiable,
+        covered=line_covered,
+        uncovered=line_uncovered,
+        unknown=line_unknown,
+        excluded=line_excluded,
+    )
+    branch_summary = CoverageSummary(
+        candidates=branch_classifiable + branch_unknown,
+        classifiable=branch_classifiable,
+        covered=branch_covered,
+        uncovered=branch_uncovered,
+        unknown=branch_unknown,
+        excluded=0,
+    )
     return AnalysisMetrics(
-        lines=CoverageSummary(
-            candidates=line_classifiable + line_unknown + line_excluded,
-            classifiable=line_classifiable,
-            covered=line_covered,
-            uncovered=line_uncovered,
-            unknown=line_unknown,
-            excluded=line_excluded,
-        ),
-        branches=CoverageSummary(
-            candidates=branch_classifiable + branch_unknown,
-            classifiable=branch_classifiable,
-            covered=branch_covered,
-            uncovered=branch_uncovered,
-            unknown=branch_unknown,
-            excluded=0,
+        lines=line_summary,
+        branches=branch_summary,
+        line_evidence=LineEvidenceSufficiency(
+            in_scope=line_summary.candidates - line_summary.excluded,
+            classifiable=line_summary.classifiable,
         ),
     )
 

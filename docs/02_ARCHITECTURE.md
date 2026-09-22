@@ -106,15 +106,23 @@ produces none. Absence of candidates does not prove absence of source branches.
 ## Metrics
 
 The shared summaries expose `candidates`, `classifiable`, `covered`, `uncovered`,
-`unknown`, `excluded`, and `coverage_percent`.
+`unknown`, `excluded`, and `coverage_percent`. Line metrics also expose a separate
+evidence-sufficiency summary: `in_scope`, `classifiable`, `classifiable_rate`, and
+`unknown_rate`.
 
 ```text
 classifiable = covered + uncovered
 coverage_percent = 100 * covered / classifiable
+classifiable_rate = 100 * classifiable / in_scope
+unknown_rate = 100 * unknown / in_scope
+in_scope = candidates - excluded
 ```
 
 A zero denominator gives `null` / not applicable. Unknown and excluded findings
-remain visible outside it. For lines, each finding is one candidate and
+remain visible outside it. `coverage_percent` (also called classifiable coverage)
+answers how much of classifiable evidence was covered; `classifiable_rate` answers
+how much of the in-scope changed-line set had direct evidence, while `unknown_rate`
+shows the remainder without direct evidence. For lines, each finding is one candidate and
 `candidates = classifiable + unknown + excluded`.
 
 Reliable branch aggregates contribute their outcome totals. Each unknown branch
@@ -140,11 +148,12 @@ All file arguments resolve from the caller's working directory, independently of
 a coverage summary. Successful analysis/help/version exit 0; expected input/write
 errors exit 1; invalid CLI usage exits 2. Coverage levels do not change the exit code.
 
-JSON schema `1.0` contains `analysis.base`, `analysis.head`, line/branch `metrics`,
-`lines`, `excluded_lines`, `branches`, and optional `supporting_evidence`. The
-reported base is the resolved supplied base commit; the actual merge base remains
-internal to Git acquisition. Findings retain path, line, reason and available hits
-or branch aggregates. No source text or full changed-file inventory is exported.
+JSON schema `1.1` contains `analysis.base`, `analysis.head`, line/branch `metrics`,
+line evidence sufficiency, `lines`, `excluded_lines`, `branches`, and optional
+`supporting_evidence`. The reported base is the resolved supplied base commit; the
+actual merge base remains internal to Git acquisition. Findings retain path, line,
+reason and available hits or branch aggregates. No source text or full changed-file
+inventory is exported.
 
 All renderers consume the same stored summaries. HTML is standalone UTF-8 with
 escaped evidence text; Markdown escapes table content. ReportGenerator links are

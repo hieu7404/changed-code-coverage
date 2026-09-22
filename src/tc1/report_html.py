@@ -5,7 +5,7 @@ from __future__ import annotations
 from html import escape
 
 from tc1.errors import ModelValidationError
-from tc1.models import AnalysisResult, CoverageSummary
+from tc1.models import AnalysisResult, CoverageSummary, LineEvidenceSufficiency
 
 
 def _percentage(summary: CoverageSummary) -> str:
@@ -22,6 +22,17 @@ def _summary(title: str, summary: CoverageSummary) -> str:
         + "</tr></thead><tbody><tr>"
         + "".join(f"<td>{value}</td>" for value in values)
         + "</tr></tbody></table></section>"
+    )
+
+
+def _line_evidence(summary: CoverageSummary, evidence: LineEvidenceSufficiency) -> str:
+    rate = "N/A" if evidence.classifiable_rate is None else f"{evidence.classifiable_rate:.2f}%"
+    unknown_rate = "N/A" if evidence.unknown_rate is None else f"{evidence.unknown_rate:.2f}%"
+    return (
+        "<p><strong>Changed-code coverage:</strong> " + _percentage(summary) + ".<br>"
+        "<strong>Evidence available for:</strong> " + rate + " of in-scope changed lines "
+        f"({evidence.classifiable} / {evidence.in_scope}).<br>"
+        f"<strong>Unknown evidence:</strong> {unknown_rate} of in-scope changed lines.</p>"
     )
 
 
@@ -72,6 +83,7 @@ def render_html(
   <h1>TC1 Changed-Code Coverage Report</h1>
   <p>Base: <code>{_cell(analysis.base)}</code><br>Head: <code>{_cell(analysis.head)}</code></p>
   {_summary("Changed Lines", analysis.metrics.lines)}
+  {_line_evidence(analysis.metrics.lines, analysis.metrics.line_evidence)}
   {_summary("Changed Branches", analysis.metrics.branches)}
   <section><h2>Line Findings</h2><table><thead><tr><th>Path</th><th>Line</th><th>Status</th><th>Hits</th><th>Reason</th></tr></thead><tbody>{line_rows}</tbody></table></section>
   <section><h2>Excluded Lines</h2><table><thead><tr><th>Path</th><th>Line</th><th>Reason</th></tr></thead><tbody>{excluded_rows}</tbody></table></section>

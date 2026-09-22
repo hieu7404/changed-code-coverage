@@ -105,6 +105,9 @@ def test_analyze_writes_requested_reports_and_links_supporting_evidence(git_repo
         "candidates": 0, "classifiable": 0, "covered": 0, "uncovered": 0,
         "unknown": 0, "excluded": 0, "coverage_percent": None,
     }
+    assert report["metrics"]["line_evidence"] == {
+        "in_scope": 0, "classifiable": 0, "classifiable_rate": None, "unknown_rate": None,
+    }
     assert report["supporting_evidence"] == {
         "report_generator_html": "coverage/index.html", "available": True,
     }
@@ -227,6 +230,9 @@ def test_analyze_writes_explicit_path_exclusions(git_repo, tmp_path):
     assert report["metrics"]["lines"] == {
         "candidates": 2, "classifiable": 0, "covered": 0, "uncovered": 0,
         "unknown": 0, "excluded": 2, "coverage_percent": None,
+    }
+    assert report["metrics"]["line_evidence"] == {
+        "in_scope": 0, "classifiable": 0, "classifiable_rate": None, "unknown_rate": None,
     }
     assert report["excluded_lines"] == [
         {"path": "src/Generated.g.cs", "line": 1, "reason": "path_rule:**/*.g.cs"},

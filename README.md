@@ -52,8 +52,11 @@ another local C# repository and the optional viewer, follow the
 | `unknown` | Evidence is missing, ambiguous or unreliable |
 | Excluded | An explicit caller-supplied path rule removes the line from analysis |
 
-Coverage is `covered / (covered + uncovered)`. Unknown and excluded findings stay
-visible outside the denominator; an empty denominator is `null`, not 0%.
+Changed-code coverage (classifiable coverage) is `covered / (covered + uncovered)`.
+Reports show it beside the line `classifiable rate`: `(covered + uncovered) /
+in-scope changed lines`, and `unknown rate`: `unknown / in-scope changed lines`.
+Unknown and excluded findings stay visible outside the coverage denominator; an
+empty denominator is `null`, not 0%.
 Branches use reliable collector aggregates without guessed true/false identities.
 Coverage demonstrates execution; it does not establish assertion quality or code correctness.
 

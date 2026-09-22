@@ -67,3 +67,13 @@ The local analyzer is usable for coverage review. No CI workflow or coverage gat
 implemented. A trustworthy threshold has not been established; representative mapping
 validation, unknown/exclusion policy and explicit team approval must precede a gate.
 Report-only CI is a separate optional follow-up, not a completed feature.
+
+## D029 — Separate line-evidence sufficiency from coverage
+
+Changed-code coverage remains `covered / (covered + uncovered)`. Reports also
+publish line-only classifiable and unknown rates, `classifiable / in_scope` and
+`unknown / in_scope`, where in-scope means changed-line candidates after explicit
+exclusions. This prevents a high coverage percentage from being read as evidence
+for all changed lines. Branches do not receive analogous rates because their
+candidates mix known outcomes with unknown locations and are not a source-branch
+inventory.

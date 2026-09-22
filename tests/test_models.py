@@ -7,7 +7,8 @@ import pytest
 from tc1.errors import ModelValidationError
 from tc1.models import (
     AnalysisMetrics, AnalysisResult, BranchAggregate, BranchResult, ConditionEvidence,
-    CoverageStatus, CoverageSummary, ExcludedLine, LineCoverage, LineResult, SourceLocation,
+    CoverageStatus, CoverageSummary, ExcludedLine, LineCoverage, LineEvidenceSufficiency,
+    LineResult, SourceLocation,
 )
 
 
@@ -87,10 +88,20 @@ def test_branch_aggregate_and_unknown_location_are_distinct(location):
 
 def test_analysis_result_accepts_only_summary_metrics(location):
     summary = CoverageSummary(1, 1, 1, 0, 0, 0)
-    metrics = AnalysisMetrics(summary, summary)
+    metrics = AnalysisMetrics(summary, summary, LineEvidenceSufficiency(1, 1))
     assert AnalysisResult("base", "head", metrics=metrics).metrics == metrics
     with pytest.raises(ModelValidationError):
         AnalysisResult("base", "head", metrics=summary)
+
+
+def test_line_evidence_must_match_the_line_summary():
+    summary = CoverageSummary(2, 1, 1, 0, 1, 0)
+    evidence = AnalysisMetrics(summary, summary, LineEvidenceSufficiency(2, 1)).line_evidence
+    assert (evidence.classifiable_rate, evidence.unknown_rate) == (50.0, 50.0)
+    with pytest.raises(ModelValidationError, match="in_scope"):
+        AnalysisMetrics(summary, summary, LineEvidenceSufficiency(1, 1))
+    with pytest.raises(ModelValidationError, match="classifiable"):
+        AnalysisMetrics(summary, summary, LineEvidenceSufficiency(2, 0))
 
 
 @pytest.mark.parametrize("factory", [

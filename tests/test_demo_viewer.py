@@ -28,8 +28,11 @@ def test_demo_viewer_has_one_report_flow_and_local_assets() -> None:
 
 def test_showcase_report_exercises_visible_tc1_evidence_states() -> None:
     report = _embedded_data("showcase-report")
-    assert report["schema_version"] == "1.0"
+    assert report["schema_version"] == "1.1"
     assert report["metrics"]["lines"]["coverage_percent"] == 50.0
+    assert report["metrics"]["line_evidence"] == {
+        "in_scope": 10, "classifiable": 8, "classifiable_rate": 80.0, "unknown_rate": 20.0,
+    }
     assert {finding["status"] for finding in report["lines"]} == {"covered", "uncovered", "unknown"}
     assert len(report["excluded_lines"]) == 2
     assert report["metrics"]["branches"]["coverage_percent"] == 75.0
@@ -41,3 +44,4 @@ def test_demo_viewer_uses_safe_dom_text_and_supports_report_urls() -> None:
     assert "URLSearchParams" in application
     assert "fetch(url)" in application
     assert 'query.get("report")' in application
+    assert "renderLineEvidence" in application

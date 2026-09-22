@@ -37,6 +37,10 @@ def test_line_metrics_keep_unknown_and_excluded_visible_outside_denominator():
 
     assert summary == CoverageSummary(4, 2, 1, 1, 1, 1)
     assert summary.coverage_percent == 50.0
+    evidence = calculate_metrics(analysis).line_evidence
+    assert (evidence.in_scope, evidence.classifiable, evidence.classifiable_rate, evidence.unknown_rate) == (
+        3, 2, 100 * 2 / 3, 100 / 3,
+    )
 
 
 def test_branch_metrics_use_aggregate_outcomes_and_visible_unknown_findings():
@@ -69,6 +73,8 @@ def test_no_classifiable_evidence_has_null_coverage():
     assert metrics.branches == CoverageSummary(1, 0, 0, 0, 1, 0)
     assert metrics.lines.coverage_percent is None
     assert metrics.branches.coverage_percent is None
+    assert metrics.line_evidence.classifiable_rate == 0.0
+    assert metrics.line_evidence.unknown_rate == 100.0
 
 
 def test_metrics_are_attached_to_one_immutable_analysis_result():
