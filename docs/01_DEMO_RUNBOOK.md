@@ -87,7 +87,7 @@ Replace `BASE_REV` with the chosen base. This single-line command works with eit
 shell once the Python executable is selected:
 
 ```bash
-python -m tc1 analyze --repo . --base BASE_REV --head HEAD --coverage artifacts/tc1/coverage.cobertura.xml --json artifacts/tc1/report.json --markdown artifacts/tc1/report.md --html artifacts/tc1/index.html --report-generator-html artifacts/tc1/coverage/index.html
+python -m tc1 analyze --repo . --base BASE_REV --head HEAD --coverage artifacts/tc1/coverage.cobertura.xml --provenance artifacts/tc1/coverage-run.json --require-provenance --json artifacts/tc1/report.json --markdown artifacts/tc1/report.md --html artifacts/tc1/index.html --report-generator-html artifacts/tc1/coverage/index.html
 ```
 
 Optional exclusions are explicit and repeatable, for example
@@ -100,7 +100,7 @@ omits test assemblies.
 
 Open `artifacts/tc1/index.html`, or read `report.md` / `report.json` in the same folder.
 
-1. Check the selected revisions and collection metadata.
+1. Check that coverage provenance is `verified`, then inspect the selected revisions and collection metadata.
 2. Inspect uncovered changed lines against the diff and coverage evidence; add tests
    for the relevant behavior where appropriate.
 3. Inspect unknown reasons before drawing conclusions. Missing instrumentation does
@@ -135,7 +135,7 @@ class-level Cobertura at its selected head. From the TC1 checkout, substitute pa
 relative to your current directory:
 
 ```bash
-python -m tc1 analyze --repo PATH_TO_PILOT --base BASE_REV --head HEAD_REV --coverage PATH_TO_COBERTURA --json artifacts/tc1/pilot/report.json --markdown artifacts/tc1/pilot/report.md --html artifacts/tc1/pilot/index.html
+python -m tc1 analyze --repo PATH_TO_PILOT --base BASE_REV --head HEAD_REV --coverage PATH_TO_COBERTURA --provenance PATH_TO_PROVENANCE --require-provenance --json artifacts/tc1/pilot/report.json --markdown artifacts/tc1/pilot/report.md --html artifacts/tc1/pilot/index.html
 ```
 
 `--coverage` and report paths resolve against the caller's working directory,
@@ -152,5 +152,6 @@ claiming mapping accuracy for that project.
 | Many `path_unmatched` findings | Cobertura filenames/source roots must identify paths inside the selected repository; no basename guessing or remapping option exists |
 | Missing line or ambiguous evidence | Inspect class-level XML entries and duplicates; retain `unknown` until resolved |
 | No branch percentage | Only changed lines with reliable collector branch evidence enter that denominator |
+| Provenance error | Recollect coverage from a clean worktree at the selected head; the sidecar commit and XML hash must match |
 | ReportGenerator unavailable | Generate HTML separately and pass the correct entry page |
 | Unexpectedly empty result | Confirm the committed comparison; local edits and deletion-only changes add no head-line candidates |

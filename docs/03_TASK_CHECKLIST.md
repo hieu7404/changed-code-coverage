@@ -12,6 +12,7 @@ implementation stages.
 - [x] Covered / uncovered / unknown line findings with explicit reasons.
 - [x] Reliable aggregate branch findings without semantic true/false guesses.
 - [x] Explicit path exclusions and shared metrics with visible coverage and line-evidence denominators.
+- [x] Optional strict coverage provenance validation for commit, clean worktree and XML hash.
 - [x] JSON, Markdown and standalone HTML reports; optional ReportGenerator link.
 - [x] Static local viewer for an existing JSON report.
 - [x] Automated module/integration tests and 14 reviewed controlled evaluation cases.

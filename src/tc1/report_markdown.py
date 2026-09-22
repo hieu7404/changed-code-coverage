@@ -52,6 +52,8 @@ def render_markdown(
         "",
         f"- Base: `{_text(analysis.base)}`",
         f"- Head: `{_text(analysis.head)}`",
+        "- Coverage provenance: `unverified`" if analysis.provenance is None else
+        f"- Coverage provenance: `verified` (commit `{_text(analysis.provenance.commit_sha)}`, clean worktree)",
         "",
     ]
     lines.extend(_summary("Changed Lines", analysis.metrics.lines))

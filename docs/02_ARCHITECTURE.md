@@ -59,8 +59,17 @@ external diff/text conversion. Large diffs have not been benchmarked.
   classes. Each changed line still needs exactly one explicit record across those classes.
   A class that can name multiple changed Git paths is ambiguous.
 
-TC1 does not verify coverage-to-commit provenance or merge multiple coverage exports.
-The caller must collect the selected input from the intended head.
+TC1 supports one strict JSON provenance sidecar per Cobertura export. When supplied,
+it must identify the selected head commit, declare a clean worktree, and match the
+coverage XML SHA-256; any mismatch fails analysis before line/branch mapping. A
+successful report is `verified` only after those checks. Without a sidecar, reports
+are explicitly `unverified`; `--require-provenance` rejects that mode. TC1 does not
+merge multiple coverage exports.
+
+The sidecar uses schema version `1.0` and requires `commit_sha`, `dirty_state`,
+`collector`, `collector_version`, `collection_command`, `target_framework`,
+`coverage_xml_sha256`, and `timestamp`. Additional collector metadata is retained
+by the sidecar owner but does not weaken TC1's required checks.
 
 ## Changed lines
 
@@ -142,13 +151,16 @@ and unknown locations and should not be read as a total source-branch inventory.
 | `--json`, `--markdown`, `--html` | Optional distinct output paths; parent folders are created |
 | `--report-generator-html` | Optional existing supporting HTML entry page |
 | `--exclude-path` | Repeatable explicit path rule |
+| `--provenance` | Optional collection sidecar; a supplied sidecar must verify commit, clean worktree and XML hash |
+| `--require-provenance` | Reject analysis unless a supplied sidecar verifies |
 
 All file arguments resolve from the caller's working directory, independently of
 `--repo`. With no destinations, analysis runs without writing a report or printing
 a coverage summary. Successful analysis/help/version exit 0; expected input/write
 errors exit 1; invalid CLI usage exits 2. Coverage levels do not change the exit code.
 
-JSON schema `1.1` contains `analysis.base`, `analysis.head`, line/branch `metrics`,
+JSON schema `1.2` contains `analysis.base`, `analysis.head`, provenance status,
+line/branch `metrics`,
 line evidence sufficiency, `lines`, `excluded_lines`, `branches`, and optional
 `supporting_evidence`. The reported base is the resolved supplied base commit; the
 actual merge base remains internal to Git acquisition. Findings retain path, line,

@@ -91,8 +91,10 @@ remain local and are not required to run TC1.
 1. Choose an authorized local C# repository with its existing test runner and a
    small set of reviewable committed base/head diffs. Required history must be local.
 2. Collect Cobertura from each selected head after tests pass. Record collector,
-   revision and run metadata; retain the original export. Inspect class-level paths,
-   line hits and branch aggregates before relying on them.
+revision and run metadata; retain the original export. Use a provenance sidecar with
+the head commit, clean-worktree state and XML SHA-256, then run TC1 with
+`--provenance ... --require-provenance`. Inspect class-level paths, line hits and
+branch aggregates before relying on them.
 3. Generate reports with the [runbook](01_DEMO_RUNBOOK.md#another-local-c-repository).
 4. Compare changed head lines, XML/ReportGenerator and TC1 findings. Sample covered,
    uncovered and unknown cases, exclusions when used, and reliable branch aggregates.

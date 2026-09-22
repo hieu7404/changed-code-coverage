@@ -77,3 +77,12 @@ exclusions. This prevents a high coverage percentage from being read as evidence
 for all changed lines. Branches do not receive analogous rates because their
 candidates mix known outcomes with unknown locations and are not a source-branch
 inventory.
+
+## D030 — Verify coverage provenance at whole-run scope
+
+An optional versioned JSON sidecar records collection commit, dirty state,
+collector/version, command, target framework, coverage XML SHA-256 and timestamp.
+When it is supplied, TC1 verifies the selected head, clean worktree and exact XML
+bytes before mapping. A mismatch fails the command rather than assigning candidate
+lines `unknown`; successful reports are `verified`, while no sidecar is explicitly
+`unverified`. `--require-provenance` makes verification mandatory.

@@ -38,6 +38,31 @@ class AnalysisRequest:
     html_output: Path | None = None
     report_generator_html: Path | None = None
     exclude_paths: tuple[str, ...] = ()
+    provenance: Path | None = None
+    require_provenance: bool = False
+
+
+@dataclass(frozen=True)
+class CoverageProvenance:
+    """Verified metadata for the one Cobertura export used by an analysis."""
+
+    commit_sha: str
+    dirty_state: bool
+    collector: str
+    collector_version: str
+    collection_command: str
+    target_framework: str
+    coverage_xml_sha256: str
+    timestamp: str
+
+    def __post_init__(self) -> None:
+        for name in (
+            "commit_sha", "collector", "collector_version", "collection_command",
+            "target_framework", "coverage_xml_sha256", "timestamp",
+        ):
+            _text(name, getattr(self, name))
+        if type(self.dirty_state) is not bool:
+            raise ModelValidationError("dirty_state must be a boolean")
 
 
 @dataclass(frozen=True)
@@ -219,10 +244,13 @@ class AnalysisResult:
     branches: tuple[BranchResult, ...] = ()
     excluded_lines: tuple[ExcludedLine, ...] = ()
     metrics: AnalysisMetrics | None = None
+    provenance: CoverageProvenance | None = None
 
     def __post_init__(self) -> None:
         if self.metrics is not None and not isinstance(self.metrics, AnalysisMetrics):
             raise ModelValidationError("metrics must be an AnalysisMetrics or None")
+        if self.provenance is not None and not isinstance(self.provenance, CoverageProvenance):
+            raise ModelValidationError("provenance must be a CoverageProvenance or None")
 
 
 class ChangeKind(StrEnum):

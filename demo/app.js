@@ -5,7 +5,7 @@
   const elements = {
     fileInput: byId("report-file"), loadShowcase: byId("load-showcase"), reportSource: byId("report-source"),
     sourceBadge: byId("source-badge"), loadError: byId("load-error"),
-    base: byId("base-revision"), head: byId("head-revision"), schema: byId("schema-version"),
+    base: byId("base-revision"), head: byId("head-revision"), provenance: byId("coverage-provenance"), schema: byId("schema-version"),
     lineCoverage: byId("line-coverage"), lineRatio: byId("line-ratio"), lineEvidence: byId("line-evidence"), lineCounts: byId("line-counts"),
     branchCoverage: byId("branch-coverage"), branchRatio: byId("branch-ratio"), branchCounts: byId("branch-counts"),
     statusFilter: byId("status-filter"), pathFilter: byId("path-filter"), lineFindingCount: byId("line-finding-count"),
@@ -47,6 +47,8 @@
   }
   function renderContext(report) {
     elements.base.textContent = asText(report.analysis.base); elements.head.textContent = asText(report.analysis.head); elements.schema.textContent = report.schema_version;
+    const provenance = report.provenance;
+    elements.provenance.textContent = provenance && typeof provenance === "object" && provenance.status === "verified" ? `verified (${asText(provenance.commit_sha)})` : provenance && typeof provenance === "object" ? asText(provenance.status) : "not recorded";
     renderMetric(report.metrics.lines, elements.lineCoverage, elements.lineRatio, elements.lineCounts); renderLineEvidence(report.metrics.line_evidence); renderMetric(report.metrics.branches, elements.branchCoverage, elements.branchRatio, elements.branchCounts);
   }
   function statusBadge(status) { const badge = document.createElement("span"); const known = ["covered", "uncovered", "unknown"].includes(status) ? status : "unknown"; badge.className = `status status-${known}`; badge.textContent = asText(status, "unknown"); return badge; }

@@ -8,6 +8,7 @@ Set-StrictMode -Version Latest
 
 # Resolve the executable before changing directories; no implicit SDK fallback.
 $dotnetPath = (Get-Command $Dotnet -CommandType Application -ErrorAction Stop).Source
+$gitPath = (Get-Command git -CommandType Application -ErrorAction Stop).Source
 $repoRoot = Split-Path $PSScriptRoot -Parent
 $runId = 'wp1-' + [Guid]::NewGuid().ToString('N')
 $runDirectory = Join-Path $repoRoot "artifacts/test-results/$runId"
@@ -23,6 +24,13 @@ $environment = @{
 }
 $previousEnvironment = @{}
 $transcribing = $false
+$collectionCommit = (& $gitPath -C $repoRoot rev-parse --verify 'HEAD^{commit}').Trim()
+if ($LASTEXITCODE -ne 0 -or $collectionCommit -notmatch '^[0-9a-f]{40,64}$') {
+    throw 'Cannot resolve the committed head used for coverage collection.'
+}
+$dirtyEntries = @(& $gitPath -C $repoRoot status --porcelain=v1 --untracked-files=all)
+if ($LASTEXITCODE -ne 0) { throw 'Cannot determine worktree state before coverage collection.' }
+$collectionDirty = $dirtyEntries.Count -gt 0
 
 function Invoke-SampleDotnet {
     param([string[]]$Arguments)
@@ -99,13 +107,20 @@ try {
     Copy-Item -LiteralPath $coveragePath -Destination (Join-Path $bundleDirectory 'coverage.cobertura.xml') -Force
     Copy-Item -Path (Join-Path $runHtml '*') -Destination (Join-Path $bundleDirectory 'coverage') -Recurse -Force
     $metadata = [ordered]@{
+        schema_version = '1.0'
+        commit_sha = $collectionCommit
+        dirty_state = $collectionDirty
+        collector = 'coverlet.collector'
+        collector_version = '6.0.4'
+        collection_command = 'dotnet test Tc1.Sample.slnx --no-build --configuration Debug --settings coverage.runsettings --collect XPlat Code Coverage'
+        target_framework = 'net10.0'
+        coverage_xml_sha256 = (Get-FileHash $coveragePath -Algorithm SHA256).Hash.ToLowerInvariant()
+        timestamp = [DateTime]::UtcNow.ToString('O')
         run_id = $runId
         sdk_version = $sdkVersion
         configuration = 'Debug'
         source_sha256 = (Get-FileHash (Join-Path $PSScriptRoot 'Tc1.Sample/DiscountService.cs') -Algorithm SHA256).Hash
-        coverage_sha256 = (Get-FileHash $coveragePath -Algorithm SHA256).Hash
         raw_results = "artifacts/test-results/$runId"
-        collector = 'coverlet.collector 6.0.4'
         report_generator = '5.5.11'
     }
     $metadata | ConvertTo-Json | Set-Content -LiteralPath (Join-Path $runDirectory 'run.json') -Encoding UTF8

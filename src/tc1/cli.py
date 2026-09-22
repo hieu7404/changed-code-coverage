@@ -4,6 +4,7 @@ import argparse
 import os
 import sys
 from collections.abc import Sequence
+from dataclasses import replace
 from pathlib import Path
 
 from tc1 import __version__
@@ -13,6 +14,7 @@ from tc1.git_diff import read_git_diff
 from tc1.matcher import map_changed_code
 from tc1.metrics import attach_metrics
 from tc1.models import AnalysisRequest, AnalysisResult
+from tc1.provenance import verify_provenance
 from tc1.report_html import render_html
 from tc1.report_json import render_json
 from tc1.report_markdown import render_markdown
@@ -46,6 +48,14 @@ def build_parser() -> argparse.ArgumentParser:
     analyze.add_argument(
         "--exclude-path", action="append", default=[], metavar="PATTERN",
         help="exclude changed lines matching a repository-relative path glob (repeatable)",
+    )
+    analyze.add_argument(
+        "--provenance", type=Path,
+        help="strict JSON sidecar describing the Cobertura collection input",
+    )
+    analyze.add_argument(
+        "--require-provenance", action="store_true",
+        help="fail unless --provenance is supplied and verifies the selected head and coverage XML",
     )
     return parser
 
@@ -104,8 +114,13 @@ def _write_reports(reports: tuple[tuple[Path, str], ...]) -> None:
 def analyze(request: AnalysisRequest) -> None:
     """Read, map, summarize and write every report explicitly requested."""
     changes = read_git_diff(request.repo, request.base, request.head)
+    provenance = verify_provenance(
+        request.provenance, request.coverage, changes.head_commit, required=request.require_provenance,
+    )
     coverage = read_cobertura(request.coverage)
-    analysis = attach_metrics(map_changed_code(changes, coverage, request.exclude_paths))
+    analysis = attach_metrics(replace(
+        map_changed_code(changes, coverage, request.exclude_paths), provenance=provenance,
+    ))
     _write_reports(_requested_reports(request, analysis))
 
 
@@ -121,6 +136,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         html_output=args.html_output,
         report_generator_html=args.report_generator_html,
         exclude_paths=tuple(args.exclude_path),
+        provenance=args.provenance,
+        require_provenance=args.require_provenance,
     )
     try:
         analyze(request)

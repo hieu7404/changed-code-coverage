@@ -30,8 +30,8 @@ behavior is introduced by the current CLI.
 
 ## Separate extensions
 
-PR annotations, project exclusion configuration, coverage provenance checks and
-additional validated collectors may be useful after the pilot. Broader changes
+PR annotations, project exclusion configuration and additional validated collectors
+may be useful after the pilot. Broader changes
 such as multi-language support, mutation testing, dependency graphs, risk scoring,
 AI summaries or a hosted dashboard require separately agreed scope. Coverage facts
 must continue to come from instrumentation.

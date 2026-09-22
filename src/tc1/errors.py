@@ -29,5 +29,9 @@ class CoberturaError(InputError):
     """Unreadable, malformed or unsupported Cobertura input."""
 
 
+class ProvenanceError(InputError):
+    """Coverage metadata cannot verify the selected analysis input."""
+
+
 class ReportWriteError(TC1Error):
     """A requested TC1 report destination could not be written."""

@@ -36,7 +36,7 @@ in place of `python` below if the environment is not activated.
 With coverage collected from the selected committed head, replace `BASE_REV`:
 
 ```bash
-python -m tc1 analyze --repo . --base BASE_REV --head HEAD --coverage artifacts/tc1/coverage.cobertura.xml --json artifacts/tc1/report.json --markdown artifacts/tc1/report.md --html artifacts/tc1/index.html
+python -m tc1 analyze --repo . --base BASE_REV --head HEAD --coverage artifacts/tc1/coverage.cobertura.xml --provenance artifacts/tc1/coverage-run.json --require-provenance --json artifacts/tc1/report.json --markdown artifacts/tc1/report.md --html artifacts/tc1/index.html
 ```
 
 Open `artifacts/tc1/index.html`. For collection, a sample diff, ReportGenerator,

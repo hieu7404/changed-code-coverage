@@ -44,6 +44,7 @@
       <section class="context" aria-label="Analysis context">
         <div><span>Base revision</span><code id="base-revision">—</code></div>
         <div><span>Head revision</span><code id="head-revision">—</code></div>
+        <div><span>Coverage provenance</span><code id="coverage-provenance">—</code></div>
         <div><span>JSON schema</span><code id="schema-version">—</code></div>
       </section>
 
@@ -81,8 +82,9 @@
 
   <script id="showcase-report" type="application/json">
 {
-  "schema_version": "1.1",
+  "schema_version": "1.2",
   "analysis": {"base": "9b7e1c4", "head": "d3a8f51"},
+  "provenance": {"status": "unverified"},
   "metrics": {
     "lines": {"candidates": 12, "classifiable": 8, "covered": 4, "uncovered": 4, "unknown": 2, "excluded": 2, "coverage_percent": 50.0},
     "branches": {"candidates": 5, "classifiable": 4, "covered": 3, "uncovered": 1, "unknown": 1, "excluded": 0, "coverage_percent": 75.0},

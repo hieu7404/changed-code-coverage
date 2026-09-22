@@ -1,6 +1,7 @@
 """Exercise the installed CLI and its report/output contract."""
 
 import json
+import hashlib
 import subprocess
 import sys
 import sysconfig
@@ -64,6 +65,7 @@ def test_arguments_reach_pipeline_without_path_guessing(monkeypatch):
         "--markdown", "output/report.md", "--html", "output/index.html",
         "--report-generator-html", "output/coverage/index.html",
         "--exclude-path", "**/*.g.cs", "--exclude-path", "vendor/**",
+        "--provenance", "input/coverage-run.json", "--require-provenance",
     ]) == 0
     assert received == [AnalysisRequest(
         repo=Path("repo with spaces"), base="feature~1", head="feature",
@@ -71,6 +73,7 @@ def test_arguments_reach_pipeline_without_path_guessing(monkeypatch):
         markdown_output=Path("output/report.md"), html_output=Path("output/index.html"),
         report_generator_html=Path("output/coverage/index.html"),
         exclude_paths=("**/*.g.cs", "vendor/**"),
+        provenance=Path("input/coverage-run.json"), require_provenance=True,
     )]
 
 
@@ -128,6 +131,58 @@ def test_analyze_reports_missing_supporting_evidence_without_fabricating_a_link(
     ]) == 0
     evidence = json.loads(output.read_text(encoding="utf-8"))["supporting_evidence"]
     assert evidence == {"report_generator_html": "coverage/index.html", "available": False}
+
+
+def test_analyze_verifies_provenance_before_writing_reports(git_repo, tmp_path, capsys):
+    head = git_repo.commit()
+    coverage = tmp_path / "coverage.xml"
+    coverage.write_text("<coverage><packages/></coverage>", encoding="utf-8")
+    provenance = tmp_path / "coverage-run.json"
+    provenance.write_text(json.dumps({
+        "schema_version": "1.0", "commit_sha": head, "dirty_state": False,
+        "collector": "coverlet.collector", "collector_version": "6.0.4",
+        "collection_command": "dotnet test", "target_framework": "net10.0",
+        "coverage_xml_sha256": hashlib.sha256(coverage.read_bytes()).hexdigest(),
+        "timestamp": "2026-09-22T00:00:00Z",
+    }), encoding="utf-8")
+    output = tmp_path / "report.json"
+
+    assert cli.main([
+        "analyze", "--repo", str(git_repo.path), "--base", "HEAD", "--coverage", str(coverage),
+        "--provenance", str(provenance), "--require-provenance", "--json", str(output),
+    ]) == 0
+    assert capsys.readouterr().err == ""
+    report = json.loads(output.read_text(encoding="utf-8"))
+    assert report["provenance"] == {
+        "status": "verified", "commit_sha": head, "dirty_state": False,
+        "collector": "coverlet.collector", "collector_version": "6.0.4",
+        "collection_command": "dotnet test", "target_framework": "net10.0",
+        "coverage_xml_sha256": hashlib.sha256(coverage.read_bytes()).hexdigest(),
+        "timestamp": "2026-09-22T00:00:00Z",
+    }
+
+
+def test_analyze_fails_on_provenance_mismatch_without_writing_reports(git_repo, tmp_path, capsys):
+    git_repo.commit()
+    coverage = tmp_path / "coverage.xml"
+    coverage.write_text("<coverage><packages/></coverage>", encoding="utf-8")
+    provenance = tmp_path / "coverage-run.json"
+    provenance.write_text(json.dumps({
+        "schema_version": "1.0", "commit_sha": "a" * 40, "dirty_state": False,
+        "collector": "coverlet.collector", "collector_version": "6.0.4",
+        "collection_command": "dotnet test", "target_framework": "net10.0",
+        "coverage_xml_sha256": hashlib.sha256(coverage.read_bytes()).hexdigest(),
+        "timestamp": "2026-09-22T00:00:00Z",
+    }), encoding="utf-8")
+    output = tmp_path / "report.json"
+    output.write_text("existing", encoding="utf-8")
+
+    assert cli.main([
+        "analyze", "--repo", str(git_repo.path), "--base", "HEAD", "--coverage", str(coverage),
+        "--provenance", str(provenance), "--json", str(output),
+    ]) == 1
+    assert "does not match analysis head" in capsys.readouterr().err
+    assert output.read_text(encoding="utf-8") == "existing"
 
 
 def test_analyze_rejects_colliding_report_destinations_before_writing(git_repo, tmp_path, capsys):

@@ -8,7 +8,7 @@ from typing import Any
 from tc1.errors import ModelValidationError
 from tc1.models import AnalysisResult, BranchAggregate, CoverageSummary, LineEvidenceSufficiency
 
-SCHEMA_VERSION = "1.1"
+SCHEMA_VERSION = "1.2"
 
 
 def _require_metrics(analysis: AnalysisResult) -> None:
@@ -48,6 +48,23 @@ def _line_evidence_data(evidence: LineEvidenceSufficiency) -> dict[str, int | fl
     }
 
 
+def _provenance_data(analysis: AnalysisResult) -> dict[str, str | bool]:
+    if analysis.provenance is None:
+        return {"status": "unverified"}
+    provenance = analysis.provenance
+    return {
+        "status": "verified",
+        "commit_sha": provenance.commit_sha,
+        "dirty_state": provenance.dirty_state,
+        "collector": provenance.collector,
+        "collector_version": provenance.collector_version,
+        "collection_command": provenance.collection_command,
+        "target_framework": provenance.target_framework,
+        "coverage_xml_sha256": provenance.coverage_xml_sha256,
+        "timestamp": provenance.timestamp,
+    }
+
+
 def analysis_data(
     analysis: AnalysisResult, *, report_generator_html: str | None = None,
     report_generator_available: bool = False,
@@ -57,6 +74,7 @@ def analysis_data(
     data: dict[str, Any] = {
         "schema_version": SCHEMA_VERSION,
         "analysis": {"base": analysis.base, "head": analysis.head},
+        "provenance": _provenance_data(analysis),
         "metrics": {
             "lines": _summary_data(analysis.metrics.lines),
             "branches": _summary_data(analysis.metrics.branches),
