@@ -8,12 +8,13 @@ from dataclasses import replace
 from pathlib import Path
 
 from tc1 import __version__
+from tc1.candidate_model import apply_candidate_model
 from tc1.cobertura import read_cobertura
 from tc1.errors import InputError, ReportWriteError, TC1Error
 from tc1.git_diff import read_git_diff
 from tc1.matcher import map_changed_code
 from tc1.metrics import attach_metrics
-from tc1.models import AnalysisRequest, AnalysisResult
+from tc1.models import AnalysisRequest, AnalysisResult, CandidateModel
 from tc1.provenance import verify_provenance
 from tc1.report_html import render_html
 from tc1.report_json import render_json
@@ -48,6 +49,11 @@ def build_parser() -> argparse.ArgumentParser:
     analyze.add_argument(
         "--exclude-path", action="append", default=[], metavar="PATTERN",
         help="exclude changed lines matching a repository-relative path glob (repeatable)",
+    )
+    analyze.add_argument(
+        "--candidate-model", type=CandidateModel, choices=tuple(CandidateModel),
+        default=CandidateModel.ALL_CHANGED_LINES, metavar="MODEL",
+        help="changed-line candidate model (default: all_changed_lines)",
     )
     analyze.add_argument(
         "--provenance", type=Path,
@@ -118,8 +124,10 @@ def analyze(request: AnalysisRequest) -> None:
         request.provenance, request.coverage, changes.head_commit, required=request.require_provenance,
     )
     coverage = read_cobertura(request.coverage)
-    analysis = attach_metrics(replace(
-        map_changed_code(changes, coverage, request.exclude_paths), provenance=provenance,
+    mapped = replace(map_changed_code(changes, coverage, request.exclude_paths), provenance=provenance)
+    analysis = attach_metrics(apply_candidate_model(
+        mapped, repo_root=changes.repo_root, head_commit=changes.head_commit,
+        model=request.candidate_model,
     ))
     _write_reports(_requested_reports(request, analysis))
 
@@ -138,6 +146,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         exclude_paths=tuple(args.exclude_path),
         provenance=args.provenance,
         require_provenance=args.require_provenance,
+        candidate_model=args.candidate_model,
     )
     try:
         analyze(request)

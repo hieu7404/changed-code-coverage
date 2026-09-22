@@ -28,7 +28,7 @@ def test_demo_viewer_has_one_report_flow_and_local_assets() -> None:
 
 def test_showcase_report_exercises_visible_tc1_evidence_states() -> None:
     report = _embedded_data("showcase-report")
-    assert report["schema_version"] == "1.2"
+    assert report["schema_version"] == "1.3"
     assert report["provenance"] == {"status": "unverified"}
     assert report["metrics"]["lines"]["coverage_percent"] == 50.0
     assert report["metrics"]["line_evidence"] == {
@@ -47,3 +47,4 @@ def test_demo_viewer_uses_safe_dom_text_and_supports_report_urls() -> None:
     assert 'query.get("report")' in application
     assert "renderLineEvidence" in application
     assert "coverage-provenance" in application
+    assert "candidate-model" in application

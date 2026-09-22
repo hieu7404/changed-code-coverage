@@ -6,8 +6,9 @@ possible follow-ups, not existing capabilities or delivery commitments.
 
 ## Near-term validation
 
-- Validate a small representative set of real committed C# diffs, with manual
-  findings and unknown/discrepancy causes recorded.
+- Validate the executable-candidate prototype with a collector configuration other
+  than Coverlet. Compare visible model exclusions and evidence rates with the
+  default all-changed-lines model before changing any reporting semantics.
 - Run the voluntary reviewer-time pilot if reviewer usefulness needs to be measured.
 - Consider report-only CI that runs tests, collects coverage, invokes TC1 and
   publishes artifacts after sampled mapping validation. No provider is selected.

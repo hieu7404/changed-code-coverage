@@ -81,7 +81,7 @@ def render_html(
 </head>
 <body>
   <h1>TC1 Changed-Code Coverage Report</h1>
-  <p>Base: <code>{_cell(analysis.base)}</code><br>Head: <code>{_cell(analysis.head)}</code><br>Coverage provenance: <strong>{"unverified" if analysis.provenance is None else "verified"}</strong>{"" if analysis.provenance is None else f' (commit <code>{_cell(analysis.provenance.commit_sha)}</code>, clean worktree)'}</p>
+  <p>Base: <code>{_cell(analysis.base)}</code><br>Head: <code>{_cell(analysis.head)}</code><br>Candidate model: <code>{_cell(analysis.candidate_model.value)}</code><br>Coverage provenance: <strong>{"unverified" if analysis.provenance is None else "verified"}</strong>{"" if analysis.provenance is None else f' (commit <code>{_cell(analysis.provenance.commit_sha)}</code>, clean worktree)'}</p>
   {_summary("Changed Lines", analysis.metrics.lines)}
   {_line_evidence(analysis.metrics.lines, analysis.metrics.line_evidence)}
   {_summary("Changed Branches", analysis.metrics.branches)}

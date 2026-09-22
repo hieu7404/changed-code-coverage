@@ -8,7 +8,7 @@ from typing import Any
 from tc1.errors import ModelValidationError
 from tc1.models import AnalysisResult, BranchAggregate, CoverageSummary, LineEvidenceSufficiency
 
-SCHEMA_VERSION = "1.2"
+SCHEMA_VERSION = "1.3"
 
 
 def _require_metrics(analysis: AnalysisResult) -> None:
@@ -73,7 +73,11 @@ def analysis_data(
     _require_metrics(analysis)
     data: dict[str, Any] = {
         "schema_version": SCHEMA_VERSION,
-        "analysis": {"base": analysis.base, "head": analysis.head},
+        "analysis": {
+            "base": analysis.base,
+            "head": analysis.head,
+            "candidate_model": analysis.candidate_model.value,
+        },
         "provenance": _provenance_data(analysis),
         "metrics": {
             "lines": _summary_data(analysis.metrics.lines),

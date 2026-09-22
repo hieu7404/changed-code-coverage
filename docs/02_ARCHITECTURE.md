@@ -6,6 +6,7 @@
 Git CLI -> committed diff ---------+
                                   |
 Cobertura -> preserved evidence -> paths -> exclusions -> lines / branches
+                                                        -> opt-in candidate model
                                                         -> shared metrics
                                                         -> JSON / Markdown / HTML
 ```
@@ -20,7 +21,7 @@ report, while ReportGenerator independently renders supporting collector evidenc
 | `git_diff.py`, `diff_parser.py` | Git acquisition and pure raw/patch parsing |
 | `cobertura.py` | XML evidence inventory |
 | `path_normalizer.py`, `exclusions.py` | File identity and caller-supplied path rules |
-| `matcher.py`, `branch_mapper.py` | Changed-line and aggregate-branch findings |
+| `matcher.py`, `branch_mapper.py`, `candidate_model.py` | Changed-line/branch findings and opt-in source-form filtering |
 | `metrics.py` | One shared metric calculation |
 | `models.py`, `errors.py` | Immutable records and explicit errors |
 | `report_json.py`, `report_markdown.py`, `report_html.py` | Render one metrics-ready `AnalysisResult` |
@@ -56,7 +57,9 @@ external diff/text conversion. Large diffs have not been benchmarked.
   Namespace-free and consistently namespaced XML are supported.
 - Resolve paths lexically from class filenames, source roots and the repository root.
   Normalize separators and `.` / `..`; reject escapes, out-of-repository paths and
-  drive-relative paths. Do not open source files, follow symlinks or guess by basename.
+  drive-relative paths. The default model does not open source files, follow symlinks
+  or guess by basename. The executable prototype reads a selected-head Git blob only
+  after mapping a matching `no_explicit_line_evidence` finding.
 - Windows-syntax coverage paths compare case-insensitively; POSIX syntax remains
   case-sensitive regardless of the host OS.
 - Multiple classes may identify the same source file, including generated state-machine
@@ -90,7 +93,18 @@ by the sidecar owner but does not weaken TC1's required checks.
 
 Git candidates are not a source-language executable-line inventory. Uninstrumented
 comments or braces can remain unknown; an explicitly instrumented brace is counted
-according to its hits. Source appearance alone never creates an exclusion.
+according to its hits. Under the default `all_changed_lines` model, source appearance
+never creates an exclusion.
+
+The experimental `executable_prototype` runs only after mapping and only for an
+`unknown/no_explicit_line_evidence` finding in UTF-8 C#. It lexically recognizes
+comments, blanks, braces, using/namespace and preprocessor directives, attributes,
+type/const/local declarations and signatures, control-flow labels, and multiline raw
+string content. Matching forms become visible exclusions with a
+`candidate_model:executable_prototype:<form>` reason. Any unrecognized source form,
+explicit coverage finding, path problem, ambiguous evidence, or unsupported source
+encoding remains unchanged. This is an opt-in comparison model, not a replacement
+for the default denominator or a C# parser/PDB executable-line inventory.
 
 ## Exclusions
 
@@ -102,6 +116,11 @@ wins and excludes all changed head lines in that file before line/branch mapping
 Each excluded line retains `path_rule:<pattern>` as its reason. There are no default
 rules, line-range exclusions or project configuration files. Branches on excluded
 lines are not mapped or assigned invented outcome counts.
+
+Candidate-model exclusions share the visible excluded-lines inventory and metric
+`excluded` count, but retain a `candidate_model:` reason rather than pretending to
+be a repository path policy. They are created after mapping; default path exclusions
+still run before line/branch mapping.
 
 ## Changed branches
 
@@ -155,6 +174,7 @@ and unknown locations and should not be read as a total source-branch inventory.
 | `--json`, `--markdown`, `--html` | Optional distinct output paths; parent folders are created |
 | `--report-generator-html` | Optional existing supporting HTML entry page |
 | `--exclude-path` | Repeatable explicit path rule |
+| `--candidate-model` | `all_changed_lines` (default) or experimental `executable_prototype` |
 | `--provenance` | Optional collection sidecar; a supplied sidecar must verify commit, clean worktree and XML hash |
 | `--require-provenance` | Reject analysis unless a supplied sidecar verifies |
 
@@ -163,7 +183,7 @@ All file arguments resolve from the caller's working directory, independently of
 a coverage summary. Successful analysis/help/version exit 0; expected input/write
 errors exit 1; invalid CLI usage exits 2. Coverage levels do not change the exit code.
 
-JSON schema `1.2` contains `analysis.base`, `analysis.head`, provenance status,
+JSON schema `1.3` contains `analysis.base`, `analysis.head`, `analysis.candidate_model`, provenance status,
 line/branch `metrics`,
 line evidence sufficiency, `lines`, `excluded_lines`, `branches`, and optional
 `supporting_evidence`. The reported base is the resolved supplied base commit; the

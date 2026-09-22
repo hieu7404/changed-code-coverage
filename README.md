@@ -57,6 +57,11 @@ Reports show it beside the line `classifiable rate`: `(covered + uncovered) /
 in-scope changed lines`, and `unknown rate`: `unknown / in-scope changed lines`.
 Unknown and excluded findings stay visible outside the coverage denominator; an
 empty denominator is `null`, not 0%.
+
+The default candidate model is `all_changed_lines`. The experimental opt-in
+`--candidate-model executable_prototype` moves only audited C# source forms that
+are already `unknown/no_explicit_line_evidence` into visible model exclusions. It
+does not alter the default denominator, and it must not be used as a CI gate.
 Branches use reliable collector aggregates without guessed true/false identities.
 Coverage demonstrates execution; it does not establish assertion quality or code correctness.
 
@@ -67,8 +72,11 @@ Coverage demonstrates execution; it does not establish assertion quality or code
 - [Coverage rules and architecture](docs/02_ARCHITECTURE.md)
 - [Validation evidence and real-pilot procedure](docs/04_EVALUATION_PLAN.md)
 
-The controlled evaluation covers 14 reviewed scenarios. Representative real-diff
-validation and reviewer-time research remain pending; see the validation document
+The controlled evaluation covers 14 reviewed scenarios. Ten-diff GuardClauses and
+CRAP4CSharp/Coverlet collections, including sampled manual mapping audits, are
+recorded. An 80-line executable-evidence audit, historical GuardClauses cross-pilot
+comparison, and fresh provenance-verified G07 recollection support a prototype
+candidate model. Reviewer-time research remains pending. See the validation document
 for the limits of these results.
 
 This is a standalone repository. Runtime analysis uses Python's standard library

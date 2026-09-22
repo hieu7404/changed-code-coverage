@@ -21,5 +21,6 @@ to keep multiple runs. A mismatch exits nonzero.
 | [reviewer_pilot.md](reviewer_pilot.md) | Prepared voluntary reviewer-time protocol; not yet executed |
 
 See [validation evidence and pilot procedure](../docs/04_EVALUATION_PLAN.md) for
-scenario definitions, accuracy semantics and limitations. Evaluation success does
-not establish an application coverage threshold or a CI gate.
+scenario definitions, the two recorded real-pilot collections and sampled audits,
+including the 80-line evidence-sufficiency audit, and their limitations. Evaluation
+success does not establish an application coverage threshold or a CI gate.

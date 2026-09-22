@@ -27,6 +27,13 @@ class CoverageStatus(StrEnum):
     UNKNOWN = "unknown"
 
 
+class CandidateModel(StrEnum):
+    """How TC1 selects changed lines for its visible denominator."""
+
+    ALL_CHANGED_LINES = "all_changed_lines"
+    EXECUTABLE_PROTOTYPE = "executable_prototype"
+
+
 @dataclass(frozen=True)
 class AnalysisRequest:
     repo: Path
@@ -40,6 +47,7 @@ class AnalysisRequest:
     exclude_paths: tuple[str, ...] = ()
     provenance: Path | None = None
     require_provenance: bool = False
+    candidate_model: CandidateModel = CandidateModel.ALL_CHANGED_LINES
 
 
 @dataclass(frozen=True)
@@ -245,12 +253,15 @@ class AnalysisResult:
     excluded_lines: tuple[ExcludedLine, ...] = ()
     metrics: AnalysisMetrics | None = None
     provenance: CoverageProvenance | None = None
+    candidate_model: CandidateModel = CandidateModel.ALL_CHANGED_LINES
 
     def __post_init__(self) -> None:
         if self.metrics is not None and not isinstance(self.metrics, AnalysisMetrics):
             raise ModelValidationError("metrics must be an AnalysisMetrics or None")
         if self.provenance is not None and not isinstance(self.provenance, CoverageProvenance):
             raise ModelValidationError("provenance must be a CoverageProvenance or None")
+        if not isinstance(self.candidate_model, CandidateModel):
+            raise ModelValidationError("candidate_model must be a CandidateModel")
 
 
 class ChangeKind(StrEnum):

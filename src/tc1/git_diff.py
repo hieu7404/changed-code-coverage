@@ -60,6 +60,20 @@ def _resolve_commit(repo: Path, revision: str) -> str:
     return output.decode("ascii")
 
 
+def read_file_at_commit(repo: Path, commit: str, path: str) -> bytes:
+    """Read one Git-tracked file from an already resolved commit without checkout."""
+    try:
+        encoded_commit = commit.encode("ascii")
+    except UnicodeEncodeError as exc:
+        raise GitDiffError("commit must be one full object ID") from exc
+    if not _OID.fullmatch(encoded_commit):
+        raise GitDiffError("commit must be one full object ID")
+    if (not path or path.startswith("/") or "\0" in path
+            or any(part in ("", ".", "..") for part in path.split("/"))):
+        raise GitDiffError("file path must be a non-empty repository-relative path")
+    return _git(repo, "show", "--no-textconv", f"{commit}:{path}")
+
+
 def read_git_diff(repo: Path | str, base: str, head: str = "HEAD") -> GitDiffResult:
     """Return changed head lines, file metadata and resolved comparison revisions.
 

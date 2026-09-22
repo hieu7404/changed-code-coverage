@@ -18,15 +18,21 @@ implementation stages.
 - [x] Static local viewer for an existing JSON report.
 - [x] Automated module/integration tests and 14 reviewed controlled evaluation cases.
 - [x] End-to-end runbook and real-pilot observation template.
-- [x] Preliminary public C# repository test/collector compatibility run.
+- [x] Ten-diff GuardClauses/Coverlet real-pilot run with sampled manual observations.
+- [x] Ten-diff CRAP4CSharp/Coverlet collection with provenance-verified reports.
+- [x] Stratified CRAP4CSharp mapping audit: 21 line and 2 branch observations matched Git and Cobertura.
+- [x] Stratified 80-line CRAP4CSharp `no_explicit_line_evidence` audit with no executable statement observed.
+- [x] Opt-in `executable_prototype` candidate model, preserving `all_changed_lines` as default.
+- [x] Historical GuardClauses cross-pilot prototype comparison: 461 eligible unknowns moved to visible model exclusions with covered/uncovered counts unchanged (historical coverage remains unverified).
+- [x] Fresh GuardClauses G07 recollection with verified provenance: default/prototype findings reproduce the historical comparison despite byte-distinct XML output.
 
 ## Still to validate
 
-- [ ] Representative real committed diffs with classifiable findings and recorded manual review.
-- [ ] Unknown rates and discrepancy causes across those diffs.
+- [x] Compare evidence rates and sampled mapping observations across the GuardClauses and CRAP4CSharp pilots.
+- [ ] Validate the prototype against a deliberately different collector configuration before any semantic migration.
 - [ ] Reviewer-time benefit, using the separate voluntary human-review protocol.
 
-The preliminary compatibility run does not complete real-diff validation.
+The completed pilots do not establish general mapping accuracy or a threshold.
 See [validation evidence](04_EVALUATION_PLAN.md) for what each result establishes.
 
 ## CI status
@@ -41,6 +47,5 @@ certify that a change is safe to merge. No default threshold is proposed.
 
 ## Next bounded step
 
-Run TC1 on a small reviewed set of committed C# diffs, record classifiable findings,
-unknowns and mapping discrepancies using the [pilot procedure](04_EVALUATION_PLAN.md#real-pilot-validation).
-Use that evidence to decide whether report-only CI is useful before defining any gate.
+Validate the opt-in executable prototype with a collector configuration other than
+Coverlet. Do not change default semantics from the present evidence.

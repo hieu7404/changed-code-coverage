@@ -77,8 +77,10 @@ def test_json_schema_retains_evidence_and_is_deterministic():
     data = json.loads(rendered)
 
     assert rendered.endswith("\n")
-    assert data["schema_version"] == "1.2"
-    assert data["analysis"] == {"base": "base<rev>", "head": "head&rev"}
+    assert data["schema_version"] == "1.3"
+    assert data["analysis"] == {
+        "base": "base<rev>", "head": "head&rev", "candidate_model": "all_changed_lines",
+    }
     assert data["provenance"] == {"status": "unverified"}
     assert data["lines"][0] == {
         "path": "src/Service|Name.cs", "line": 1, "status": "covered",
@@ -108,6 +110,7 @@ def test_text_renderers_escape_evidence_while_markdown_preserves_readability():
     assert "base&lt;rev&gt;" in html
     assert "head&amp;rev" in html
     assert "Coverage provenance: <strong>unverified</strong>" in html
+    assert "Candidate model: <code>all_changed_lines</code>" in html
     assert "positive &lt;hits&gt;" in html
     assert 'href="coverage/&quot;unsafe&quot;.html"' in html
 

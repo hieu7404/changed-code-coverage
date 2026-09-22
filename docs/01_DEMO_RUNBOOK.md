@@ -96,6 +96,14 @@ does not expand them. Exclusions remain visible with their matching rule; none a
 applied by default. Choose test-source exclusions deliberately if the collector
 omits test assemblies.
 
+For an experimental comparison only, add
+`--candidate-model executable_prototype`. The default is `all_changed_lines` and
+does not read source text. The prototype reads UTF-8 C# from the selected Git head
+only after mapping an `unknown/no_explicit_line_evidence` finding, then moves a
+conservative set of audited structural forms to visible `candidate_model:...`
+exclusions. It preserves explicit hits, unmatched paths and executable-looking
+statements. Do not replace the default report or use this option for a gate.
+
 ## 5. Inspect and act on findings
 
 Open `artifacts/tc1/index.html`, or read `report.md` / `report.json` in the same folder.

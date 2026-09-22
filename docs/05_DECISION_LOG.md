@@ -93,3 +93,13 @@ Use Git `R100` records only. A pure exact rename changes file identity but creat
 no changed executable-line candidates, avoiding a false whole-file addition. Do not
 enable copy detection or similarity-based renamed-with-edits inference until their
 candidate semantics have been evaluated; they remain addition/deletion evidence.
+
+## D032 — Opt-in executable-candidate prototype
+
+Keep `all_changed_lines` as the default candidate model and denominator. An explicit
+`executable_prototype` may only post-process findings already mapped as
+`unknown/no_explicit_line_evidence`, reading UTF-8 C# from the selected committed
+head. It moves a conservative audited subset of structural source forms into visible
+`candidate_model:` exclusions; it never replaces explicit coverage, path mapping or
+ambiguous evidence. The CRAP4CSharp audit justifies a prototype and comparison, not
+a semantic migration, CI policy or gate.

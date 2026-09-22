@@ -11,7 +11,7 @@ import pytest
 
 from tc1 import __version__, cli
 from tc1.errors import InputError, ModelValidationError
-from tc1.models import AnalysisRequest
+from tc1.models import AnalysisRequest, CandidateModel
 
 
 def test_module_help_outside_repository(tmp_path):
@@ -65,6 +65,7 @@ def test_arguments_reach_pipeline_without_path_guessing(monkeypatch):
         "--markdown", "output/report.md", "--html", "output/index.html",
         "--report-generator-html", "output/coverage/index.html",
         "--exclude-path", "**/*.g.cs", "--exclude-path", "vendor/**",
+        "--candidate-model", "executable_prototype",
         "--provenance", "input/coverage-run.json", "--require-provenance",
     ]) == 0
     assert received == [AnalysisRequest(
@@ -74,6 +75,7 @@ def test_arguments_reach_pipeline_without_path_guessing(monkeypatch):
         report_generator_html=Path("output/coverage/index.html"),
         exclude_paths=("**/*.g.cs", "vendor/**"),
         provenance=Path("input/coverage-run.json"), require_provenance=True,
+        candidate_model=CandidateModel.EXECUTABLE_PROTOTYPE,
     )]
 
 
